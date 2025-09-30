@@ -12,28 +12,40 @@ import Cart from "./pages/Cart";
 import ProductDetail from "./products/ProductDetail";
 import ProductList from "./products/ProductList";
 
+// 👇 Import CartProvider
+import { CartProvider } from "./context/CartContext";
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Main pages with Layout */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/shop" element={<Shop /> }/>
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-        <Route path="/cart" element={<Cart />}/>
+    // 👇 Wrap your entire Router inside CartProvider
+    <CartProvider>
+      <Router>
+        <Routes>
+          {/* Main pages with Layout */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/cart" element={<Cart />} />
 
-        {/* Product pages */}
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        
+          {/* Product pages */}
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
 
-        {/* Authentication pages without layout */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </Router>
+          {/* Authentication pages without layout */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 
