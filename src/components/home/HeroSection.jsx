@@ -1,68 +1,105 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { apiGet } from "../../lib/api";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { motion } from "framer-motion";
 
-const HeroSection = ({ heightClass = "h-[90vh] md:h-[80vh] w-full " }) => {
-  const images = [
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1611048268330-53de574cae3b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDZ8fGxhdGVzdCUyMHRyYW5kJTIwZSUyMGNvbW1lcmNlJTIwaW1hZ2UlMjBjbG90aGVzJTIwbmQlMjBlbGVjdHJvbmljcyUyMHBvcnRyaWF0ZXxlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1600&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1600&auto=format&fit=crop",
-    "https://plus.unsplash.com/premium_photo-1681487933632-c9eda34fcaf1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTY1fHxsYXRlc3QlMjB0cmFuZCUyMGUlMjBjb21tZXJjZSUyMGltYWdlJTIwZWxlY3Ryb25pY3MlMjBwb3J0cmlhdGV8ZW58MHx8MHx8fDA%3D",
+const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const defaultBanners = [
+    {
+      imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop",
+      title: "Discover the Latest Trends",
+      subtitle: "Upgrade your lifestyle with our premium collections, handpicked for you.",
+      ctaText: "Shop Now",
+      ctaLink: "/shop",
+    },
   ];
 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await apiGet("/api/hero");
+        if (mounted) setBanners(Array.isArray(data) ? data : []);
+      } catch {
+        if (mounted) setBanners([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
   return (
+    <section className="relative overflow-hidden">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        spaceBetween={0}
+        slidesPerView={1}
+        loop
+        navigation
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        speed={1200}
+        className={`w-full ${heightClass}`}
+      >
+        {(loading ? defaultBanners : (banners.length ? banners : defaultBanners)).map((item, idx) => (
+          <SwiperSlide key={idx} className="relative">
+            <motion.img
+              src={item.imageUrl}
+              alt={`Hero ${idx + 1}`}
+              className="w-full h-full object-cover object-top"
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+            />
 
-    <section className="bg-gradient-to-r from-green-100 via-green-50 to-green-100 relative overflow-hidden ">
-      <div className={`flex justify-center relative ${heightClass}`}>
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={16}
-          slidesPerView={1}
-          loop
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
-          className="w-[90%] h-full rounded-m overflow-hidden"
-        >
-          {images.map((src, idx) => (
-            <SwiperSlide key={idx} className="relative">
-              <motion.img
-                src={src}
-                alt={`Hero ${idx + 1}`}
-                className="w-full h-full object-cover rounded-m mt-10"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent rounded-m"></div>
+            {/* Overlay Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 flex flex-col justify-center items-center px-6 md:px-20 lg:px-32 text-white">
+              <motion.h2
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-5xl font-extrabold leading-tight drop-shadow-lg"
+              >
+                {item.title || "Discover the Latest Trends"}
+              </motion.h2>
 
-              <div className="absolute bottom-6 left-6 md:left-12 text-white max-w-[85%] md:max-w-lg">
-                <motion.h2
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  className="text-2xl md:text-4xl font-bold "
-                >
-                  Discover the Latest Trends
-                </motion.h2>
-                <motion.p
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                  className="mt-2 text-sm md:text-base opacity-90"
-                >
-                  Shop your favorite products now
-                </motion.p>
-               </div>
-            </SwiperSlide>
-          ))}
-          </Swiper>
-        </div>
-      </section>
+              <motion.p
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="mt-4 text-sm md:text-lg opacity-90 max-w-xl"
+              >
+                {item.subtitle || "Upgrade your lifestyle with our premium collections, handpicked for you."}
+              </motion.p>
+
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="mt-6 flex gap-4"
+              >
+                {item.ctaLink && (
+                  <a href={item.ctaLink} className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition">
+                    {item.ctaText || "Shop Now"}
+                  </a>
+                )}
+                <button className="bg-white/90 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-full shadow-lg transition">
+                  Explore Collection
+                </button>
+              </motion.div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </section>
   );
 };
 

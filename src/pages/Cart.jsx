@@ -1,77 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 import { FiPlus, FiMinus, FiTrash2, FiShare2 } from "react-icons/fi";
 import Layout from "../components/layout/Layout";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "iPhone 16 128 GB: 5G Mobile Phone with Camera Control, A18 Chip and a Big Boost in Battery Life. Works with AirPods; White",
-      price: 110000,
-      quantity: 1,
-      image:
-        "/imgs/cart/cart_item_1.jpeg",
-      size: "A5",
-      stock: true,
-    },
-    {
-      id: 2,
-      name: "Reusable Water Bottle - 1L, BPA Free",
-      price: 500,
-      quantity: 2,
-      image:
-        "/imgs/cart/cart_item_2.jpeg",
-      color: "Green",
-      size: "1L",
-      stock: true,
-    },
-    {
-      id: 3, // Added a unique ID for the third item as the original had a duplicate ID of 2
-      name: "Smart Watch Series 8",
-      price: 25000,
-      quantity: 1,
-      image:
-        "/imgs/cart/cart_item_3.jpeg",
-      color: "Green",
-      size: "1L",
-      stock: true,
-    },
-  ]);
+  const { items: cartItems, updateQty, removeItem } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const increaseQty = (id) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
+  const increaseQty = (id) => updateQty(id, (cartItems.find(i => i.id === id)?.quantity || 0) + 1);
 
   const decreaseOrDeleteItem = (id, quantity) => {
-    if (quantity <= 1) { // Changed to <= 1 just in case, but 1 is usually the minimum
-      removeItem(id);
-    } else {
-      setCartItems(
-        cartItems.map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-        )
-      );
-    }
+    if (quantity <= 1) removeItem(id);
+    else updateQty(id, quantity - 1);
   };
-
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
-  // Check for duplicate IDs and filter out one if found, prioritizing unique IDs for key props.
-  // Note: The original state had two items with id: 2, this logic will keep the first one.
-  // const uniqueCartItems = cartItems.filter(
-  //   (item, index, self) => index === self.findIndex((t) => t.id === item.id)
-  // );
 
   const totalPrice = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const handleProceed = () => {
+    if (!user) {
+      navigate("/login", { replace: true, state: { from: { pathname: "/order-summary" } } });
+      return;
+    }
+    navigate("/order-summary");
+  };
 
   return (
     <Layout>
@@ -86,9 +43,7 @@ const Cart = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"> 
         <div className="lg:col-span-2 space-y-4 sm:space-y-6"> {/* Adjusted space-y for small screens */}
           {cartItems.map((item, index) => (
-            // The key should ideally be truly unique. Since the original data had duplicate IDs (id: 2), 
-            // I'm using a combination of id and index here to prevent React warnings for the original data.
-            // For production, ensure `id` is a unique identifier.
+          
             <div
               key={`${item.id}-${index}`} 
               className="flex flex-col sm:flex-row p-4 sm:p-6 bg-white rounded-lg shadow hover:shadow-lg transition cursor-pointer"
@@ -177,7 +132,7 @@ const Cart = () => {
               Your order is eligible for FREE Delivery
             </p>
           </div>
-          <button className="mt-6 w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-lg font-medium transition">
+          <button onClick={handleProceed} className="mt-6 w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-lg font-medium transition">
             Proceed to Buy
           </button>
         </div>

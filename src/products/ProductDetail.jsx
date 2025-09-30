@@ -2,9 +2,11 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import products from "../data/products";
 import Layout from "../components/layout/Layout";
+import { useCart } from "../context/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const { addItem } = useCart();
   const product = products.find((p) => p.id === parseInt(id));
 
   if (!product) {
@@ -42,7 +44,10 @@ const ProductDetail = () => {
             ₹{product.price}
           </p>
 
-          <button className="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+          <button
+            className="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+            onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+          >
             Add to Cart
           </button>
 

@@ -28,6 +28,8 @@ const Navbar = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [auth, setAuth] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [mobileHomeOpen, setMobileHomeOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
@@ -68,6 +70,15 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("auth");
+      setAuth(raw ? JSON.parse(raw) : null);
+    } catch {
+      setAuth(null);
+    }
+  }, []);
 
   return (
     <>
@@ -200,29 +211,75 @@ const Navbar = () => {
                 </button>
               </Link>
 
-              <Link
-                to="/wishlist"
-                className="group relative p-2 rounded-full hover:bg-emerald-50 text-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/30 group-hover:text-emerald-600"
-                aria-label="View wishlist"
-                title="Wishlist"
-              >
-                <RiHeartLine className="text-[20px] group-hover:hidden" />
-                <RiHeartFill className="text-[20px] hidden group-hover:block" />
-                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1.5 text-[10px] leading-[16px] text-white bg-pink-600 rounded-full text-center">
-                  0
-                </span>
-              </Link>
+              {auth && (
+                <Link
+                  to="/wishlist"
+                  className="group relative p-2 rounded-full hover:bg-emerald-50 text-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/30 group-hover:text-emerald-600"
+                  aria-label="View wishlist"
+                  title="Wishlist"
+                >
+                  <RiHeartLine className="text-[20px] group-hover:hidden" />
+                  <RiHeartFill className="text-[20px] hidden group-hover:block" />
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1.5 text-[10px] leading-[16px] text-white bg-pink-600 rounded-full text-center">
+                    0
+                  </span>
+                </Link>
+              )}
 
-              <button
-                type="button"
-                onClick={() => navigate("/login")}
-                className="group relative p-2 rounded-full hover:bg-green-50 text-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30 group-hover:text-green-700"
-                aria-label="Account"
-                title="Account"
-              >
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowAccountMenu((v) => !v)}
+                  className="group relative p-2 rounded-full hover:bg-green-50 text-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30 group-hover:text-green-700"
+                  aria-label="Account"
+                  title="Account"
+                >
                 <RiUserLine className="text-[20px] group-hover:hidden" />
                 <RiUserFill className="text-[20px] hidden group-hover:block" />
-              </button>
+                </button>
+                {showAccountMenu && (
+                  <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                    {auth ? (
+                      <>
+                        <div className="px-4 py-3 border-b">
+                          <div className="text-sm text-gray-500">Signed in as</div>
+                          <div className="text-sm font-medium text-gray-900 truncate">{auth?.name || auth?.email}</div>
+                        </div>
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                          onClick={() => { setShowAccountMenu(false); navigate("/wishlist"); }}
+                        >
+                          Wishlist
+                        </button>
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                          onClick={() => { setShowAccountMenu(false); navigate("/cart"); }}
+                        >
+                          Cart
+                        </button>
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                          onClick={() => {
+                            localStorage.removeItem("auth");
+                            setAuth(null);
+                            setShowAccountMenu(false);
+                            navigate("/login");
+                          }}
+                        >
+                          Sign out
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                        onClick={() => { setShowAccountMenu(false); navigate("/login"); }}
+                      >
+                        Sign in
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="hidden md:block h-6 w-px bg-gray-200 mx-2" />
