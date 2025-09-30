@@ -30,6 +30,8 @@ const DealsOffers = () => {
     },
   ];
 
+  const { addItem } = useCart();
+
   return (
     <section className="py-16 bg-gradient-to-r from-green-50 via-green-100 to-green-50">
       <div className="container mx-auto px-4">

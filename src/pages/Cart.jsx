@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { FiPlus, FiMinus, FiTrash2, FiShare2 } from "react-icons/fi";
 import Layout from "../components/layout/Layout";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([
@@ -35,13 +38,7 @@ const Cart = () => {
     },
   ]);
 
-  const increaseQty = (id) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
+  const increaseQty = (id) => updateQty(id, (cartItems.find(i => i.id === id)?.quantity || 0) + 1);
 
   const decreaseOrDeleteItem = (id, quantity) => {
     if (quantity <= 1) {
@@ -63,6 +60,14 @@ const Cart = () => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const handleProceed = () => {
+    if (!user) {
+      navigate("/login", { replace: true, state: { from: { pathname: "/order-summary" } } });
+      return;
+    }
+    navigate("/order-summary");
+  };
 
   return (
     <Layout>

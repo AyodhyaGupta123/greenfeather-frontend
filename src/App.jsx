@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import About from "./pages/AboutPage";
 import Shop from "./pages/Shop";
@@ -10,7 +11,6 @@ import Wishlist from "./pages/WishList";
 import Cart from "./pages/Cart";
 import ProductDetail from "./products/ProductDetail";
 import ProductList from "./products/ProductList";
-import ProfileDashboard from "./pages/profile";
 
 function App() {
   return (
@@ -21,9 +21,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/shop" element={<Shop /> }/>
         <Route path="/contact" element={<Contact />} />
-        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path="/cart" element={<Cart />}/>
-        <Route path="/profile" element={<ProfileDashboard />} />
 
         {/* Product pages */}
         <Route path="/products" element={<ProductList />} />
