@@ -10,6 +10,7 @@ import Wishlist from "./pages/WishList";
 import Cart from "./pages/Cart";
 import ProductDetail from "./products/ProductDetail";
 import ProductList from "./products/ProductList";
+import ProfileDashboard from "./pages/profile";
 
 function App() {
   return (
@@ -22,10 +23,12 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />}/>
+        <Route path="/profile" element={<ProfileDashboard />} />
 
         {/* Product pages */}
         <Route path="/products" element={<ProductList />} />
         <Route path="/products/:id" element={<ProductDetail />} />
+        
 
         {/* Authentication pages without layout */}
         <Route path="/login" element={<Login />} />

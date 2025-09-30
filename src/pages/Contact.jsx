@@ -5,7 +5,7 @@ const Contact = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-24">
+      <section className="relative overflow-hidden pt-8">
         <div
           className="absolute inset-0 -z-10 bg-cover bg-center"
           style={{

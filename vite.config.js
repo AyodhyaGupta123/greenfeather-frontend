@@ -5,5 +5,12 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    sourcemap: false, // disable sourcemaps in build
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      sourcemap: false, // ignore .map files during dependency optimization
+    },
+  },
 })
-
