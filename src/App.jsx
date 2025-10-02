@@ -12,6 +12,8 @@ import Cart from "./pages/Cart";
 import ProductDetail from "./products/ProductDetail";
 import ProductList from "./products/ProductList";
 import OrderSummary from "./pages/OrderSummary";
+import Trends from "./pages/Trends";
+import Deals from "./pages/Deals";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path="/cart" element={<Cart />}/>
         <Route path="/order-summary" element={<ProtectedRoute><OrderSummary /></ProtectedRoute>} />
+        <Route path="/trends" element={<Trends />} />
+        <Route path="/deals" element={<Deals />} />
 
         {/* Product pages */}
         <Route path="/products" element={<ProductList />} />

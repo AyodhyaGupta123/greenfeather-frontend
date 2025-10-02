@@ -1,6 +1,6 @@
 import React from 'react';
 import HeroSection from '../components/home/HeroSection';
-import FeaturedProducts from '../components/home/FeaturedProducts';
+import DiscoverySection from '../components/home/AmazonSections';
 import CategorySection from '../components/home/CategorySection';
 import Layout from '../components/layout/Layout';
 
@@ -9,7 +9,7 @@ const HomePage = () => {
     <>
     <Layout>
       <HeroSection heightClass="h-[300px] md:h-[500px]" />
-      <FeaturedProducts />
+      <DiscoverySection />
       <CategorySection />
       </Layout>
     </>
