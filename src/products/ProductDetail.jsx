@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import products from "../data/products";
 import Layout from "../components/layout/Layout";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { ShoppingCart, Heart, Star, Truck, RotateCcw, Shield } from "lucide-react";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
   const { addItem } = useCart();
+  const { add: addToWishlist, remove: removeFromWishlist, has: isWishlisted } = useWishlist();
   const navigate = useNavigate();
-  const product = products.find((p) => p.id === parseInt(id));
+  const product = (location.state && location.state.product) || products.find((p) => p.id === parseInt(id));
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(
     product?.colors?.[0] || product?.color || "Black"
@@ -31,6 +34,12 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     addItem({...product, color: selectedColor}, quantity);
     navigate("/cart");
+  };
+
+  const toggleWishlist = () => {
+    if (!product) return;
+    if (isWishlisted(product.id)) removeFromWishlist(product.id);
+    else addToWishlist(product);
   };
 
   const handleQuantityChange = (type) => {
@@ -70,7 +79,6 @@ const ProductDetail = () => {
 
             {/* Product Details */}
             <div className="space-y-4">
-              {/* Title */}
               <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
 
               {/* Rating */}
@@ -133,7 +141,7 @@ const ProductDetail = () => {
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`relative w-10 h-10 rounded-full border-2 transition-all ${
+                        className={`relative w-8 h-8 rounded-full border-2 transition-all ${
                           selectedColor === color
                             ? "border-green-600 scale-110 shadow-lg"
                             : "border-gray-300 hover:border-gray-400 hover:scale-105"
@@ -203,16 +211,16 @@ const ProductDetail = () => {
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-md"
+                className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-md"
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>
 
               {/* Wishlist Button */}
-              <button className="w-full border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2">
+              <button onClick={toggleWishlist} className={`w-full border-2 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${isWishlisted(product.id) ? 'border-red-300 text-red-600 bg-red-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}>
                 <Heart className="w-5 h-5" />
-                Add to Wishlist
+                {isWishlisted(product.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
               </button>
 
               {/* Features */}

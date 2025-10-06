@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X, SlidersHorizontal } from "lucide-react";
 
 const SidebarFilter = ({ products = [], onFilter }) => {
+  const priceMax = useMemo(() => {
+    const numericPrices = (products || [])
+      .map(p => {
+        const raw = p?.price;
+        if (typeof raw === "number") return raw;
+        if (typeof raw === "string") {
+          const parsed = Number(String(raw).replace(/[^0-9.]/g, ""));
+          return Number.isFinite(parsed) ? parsed : null;
+        }
+        return null;
+      })
+      .filter(v => v !== null);
+    const max = numericPrices.length ? Math.max(...numericPrices) : 50000;
+    return max || 50000;
+  }, [products]);
+
   const [filters, setFilters] = useState({
     category: [],
     brand: [],
@@ -9,6 +25,11 @@ const SidebarFilter = ({ products = [], onFilter }) => {
     price: 50000,
     rating: null,
   });
+
+  useEffect(() => {
+    // keep price filter in sync with data changes
+    setFilters(prev => ({ ...prev, price: Math.min(prev.price, priceMax) }));
+  }, [priceMax]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Checkbox handler
@@ -40,18 +61,26 @@ const SidebarFilter = ({ products = [], onFilter }) => {
       category: [],
       brand: [],
       color: [],
-      price: 50000,
+      price: priceMax,
       rating: null,
     });
   };
 
   // Filter products
   const filteredProducts = (products || []).filter(p => {
-    const categoryMatch = !filters.category.length || filters.category.includes(p.category);
-    const brandMatch = !filters.brand.length || filters.brand.includes(p.brand);
-    const colorMatch = !filters.color.length || filters.color.includes(p.color);
-    const priceMatch = p.price <= filters.price;
-    const ratingMatch = !filters.rating || p.rating >= filters.rating;
+    const categoryMatch = !filters.category.length || (p?.category && filters.category.includes(p.category));
+    const brandMatch = !filters.brand.length || (p?.brand && filters.brand.includes(p.brand));
+
+    const singular = p?.color ? [p.color] : [];
+    const plural = Array.isArray(p?.colors) ? p.colors : [];
+    const productColors = [...new Set([...singular, ...plural].filter(Boolean))];
+    const colorMatch = !filters.color.length || productColors.some(c => filters.color.includes(c));
+
+    const numericPrice = typeof p?.price === "number" ? p.price : Number(String(p?.price ?? "").replace(/[^0-9.]/g, ""));
+    const priceMatch = Number.isFinite(numericPrice) ? numericPrice <= filters.price : true;
+
+    const productRating = typeof p?.rating === "number" ? p.rating : 0;
+    const ratingMatch = !filters.rating || productRating >= filters.rating;
     return categoryMatch && brandMatch && colorMatch && priceMatch && ratingMatch;
   });
 
@@ -61,9 +90,16 @@ const SidebarFilter = ({ products = [], onFilter }) => {
   }, [filters, products]);
 
   // Get unique values with counts
-  const categories = [...new Set((products || []).map(p => p.category))];
-  const brands = [...new Set((products || []).map(p => p.brand))];
-  const colors = [...new Set((products || []).map(p => p.color))];
+  const categories = [...new Set((products || []).map(p => p?.category).filter(Boolean))];
+  const brands = [...new Set((products || []).map(p => p?.brand).filter(Boolean))];
+  const colors = useMemo(() => {
+    const all = (products || []).flatMap(p => {
+      const arr = Array.isArray(p?.colors) ? p.colors : [];
+      const one = p?.color ? [p.color] : [];
+      return [...arr, ...one];
+    });
+    return [...new Set(all.filter(Boolean))];
+  }, [products]);
 
   // Count active filters
   const activeFiltersCount = 
@@ -71,7 +107,7 @@ const SidebarFilter = ({ products = [], onFilter }) => {
     filters.brand.length + 
     filters.color.length + 
     (filters.rating ? 1 : 0) +
-    (filters.price < 50000 ? 1 : 0);
+    (filters.price < priceMax ? 1 : 0);
 
   const FilterContent = () => (
     <>
@@ -173,12 +209,12 @@ const SidebarFilter = ({ products = [], onFilter }) => {
             <span className="text-lg font-semibold text-blue-600">
               ₹{filters.price.toLocaleString('en-IN')}
             </span>
-            <span className="text-sm text-gray-600">₹50k</span>
+              <span className="text-sm text-gray-600">₹{priceMax.toLocaleString('en-IN')}</span>
           </div>
           <input
             type="range"
             min="0"
-            max="50000"
+            max={priceMax}
             step="1000"
             value={filters.price}
             onChange={handlePriceChange}

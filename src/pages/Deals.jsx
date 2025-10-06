@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/layout/Layout";
+import SidebarFilter from "../common/SidebarFilter";
 
 const deals = [
   {
@@ -48,22 +49,42 @@ const deals = [
 ];
 
 const Deals = () => {
+  const normalized = useMemo(() => deals.map(d => ({
+    ...d,
+    price: typeof d.price === "number" ? d.price : Number(String(d.price).replace(/[^0-9.]/g, "")),
+    category: "Deals"
+  })), []);
+  const [filtered, setFiltered] = useState(normalized);
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-10">
-        {/* Title Section */}
         <h1 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 text-center">
           Today's Best Deals
         </h1>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {deals.map((item) => (
+        <div className="flex gap-6">
+          <aside className="w-64 flex-shrink-0 hidden md:block">
+            <div className="sticky top-20">
+              <SidebarFilter products={normalized} onFilter={setFiltered} />
+            </div>
+          </aside>
+
+          <div className="md:hidden w-full mb-4">
+            <SidebarFilter products={normalized} onFilter={setFiltered} />
+          </div>
+
+          <main className="flex-1">
+            <div className="mb-4 text-sm text-gray-600">
+              Showing {filtered.length} of {normalized.length} products
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {filtered.map((item) => (
             <div
               key={item.id}
               className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition p-3 flex flex-col"
             >
-              <Link to={`/product/${item.id}`} className="flex flex-col h-full">
+              <Link to={`/products/${item.id}`} className="flex flex-col h-full">
                 <div className="w-full h-48 flex items-center justify-center">
                   <img
                     src={item.image}
@@ -77,7 +98,7 @@ const Deals = () => {
                   </h3>
                 </div>
                 <div className="mt-2 text-lg font-semibold text-gray-900">
-                  {item.price}
+                  ₹{item.price.toLocaleString('en-IN')}
                 </div>
                 <button className="mt-2 text-sm bg-yellow-400 text-gray-900 rounded-md py-1 hover:bg-yellow-500 transition">
                   View Details
@@ -85,6 +106,8 @@ const Deals = () => {
               </Link>
             </div>
           ))}
+        </div>
+          </main>
         </div>
       </div>
     </Layout>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const cardClass =
   "bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden";
@@ -10,23 +11,23 @@ const SectionCard = ({ title, items, ctaLabel }) => {
         <h3 className="text-xl font-bold mb-4">{title}</h3>
         <div className="grid grid-cols-2 gap-4">
           {items.map((it, idx) => (
-            <div key={idx} className="space-y-2">
+            <Link key={idx} to={`/products?search=${encodeURIComponent(it.label)}`} className="space-y-2">
               <img
                 src={it.img}
                 alt={it.label}
                 className="w-full h-28 object-cover rounded transform transition-transform duration-300 hover:scale-105"
               />
               <p className="text-sm text-gray-700">{it.label}</p>
-            </div>
+            </Link>
           ))}
         </div>
         {ctaLabel && (
-          <a
+          <Link
             className="inline-block mt-4 text-sm text-blue-700 hover:underline"
-            href="#"
+            to={`/products?search=${encodeURIComponent(title)}`}
           >
             {ctaLabel}
-          </a>
+          </Link>
         )}
       </div>
     </div>

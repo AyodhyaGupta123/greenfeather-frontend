@@ -28,35 +28,42 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
+  // Generate unique key per product + variation
+  const getUniqueId = (product) => {
+    return `${product.id}-${product.color || "default"}-${product.size || "default"}`;
+  };
+
   // Add item to cart
   const addItem = (product, quantity = 1) => {
+    const uniqueId = getUniqueId(product);
+
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === product.id);
+      const existing = prev.find((i) => i.uniqueId === uniqueId);
       if (existing) {
-        return prev.map((i) => 
-          i.id === product.id 
-            ? { ...i, quantity: i.quantity + quantity } 
+        return prev.map((i) =>
+          i.uniqueId === uniqueId
+            ? { ...i, quantity: i.quantity + quantity }
             : i
         );
       }
-      return [...prev, { ...product, quantity }];
+      return [...prev, { ...product, quantity, uniqueId }];
     });
   };
 
   // Remove item from cart
-  const removeItem = (id) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const removeItem = (uniqueId) => {
+    setItems((prev) => prev.filter((i) => i.uniqueId !== uniqueId));
   };
 
   // Update quantity of specific item
-  const updateQty = (id, quantity) => {
+  const updateQty = (uniqueId, quantity) => {
     if (quantity <= 0) {
-      removeItem(id);
+      removeItem(uniqueId);
       return;
     }
-    setItems((prev) => 
-      prev.map((i) => 
-        i.id === id ? { ...i, quantity } : i
+    setItems((prev) =>
+      prev.map((i) =>
+        i.uniqueId === uniqueId ? { ...i, quantity } : i
       )
     );
   };
@@ -68,7 +75,7 @@ export const CartProvider = ({ children }) => {
 
   // Get total price
   const getTotal = () => {
-    return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
 
   // Get total number of items
@@ -77,15 +84,15 @@ export const CartProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ 
-      items, 
-      addItem, 
-      removeItem, 
-      updateQty, 
-      clear, 
-      getTotal, 
-      getTotalItems 
-    }), 
+    () => ({
+      items,
+      addItem,
+      removeItem,
+      updateQty,
+      clear,
+      getTotal,
+      getTotalItems,
+    }),
     [items]
   );
 

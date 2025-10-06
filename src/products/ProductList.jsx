@@ -1,15 +1,41 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo, useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import products from "../data/products"; 
 import Layout from "../components/layout/Layout";
 import SidebarFilter from "../common/SidebarFilter";
+import { useWishlist } from "../context/WishlistContext";
 
 const ProductList = () => {
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const search = (params.get("search") || "").toLowerCase();
+  const categoryParam = params.get("category");
+
+  const baseProducts = useMemo(() => {
+    let list = products;
+    if (categoryParam && categoryParam !== "All") {
+      list = list.filter(p => (p.category || "").toLowerCase() === categoryParam.toLowerCase());
+    }
+    if (search) {
+      list = list.filter(p => {
+        const hay = `${p.name || ""} ${p.brand || ""} ${p.category || ""}`.toLowerCase();
+        return hay.includes(search);
+      });
+    }
+    return list;
+  }, [location.search]);
+
+  const [filteredProducts, setFilteredProducts] = useState(baseProducts);
+
+  useEffect(() => {
+    setFilteredProducts(baseProducts);
+  }, [baseProducts]);
 
   const handleFilter = (filtered) => {
     setFilteredProducts(filtered);
   };
+
+  const { add: addToWishlist, remove: removeFromWishlist, has: isWishlisted } = useWishlist();
 
   return (
     <Layout>
@@ -19,7 +45,7 @@ const ProductList = () => {
             <aside className="w-64 flex-shrink-0 hidden md:block">
               <div className="sticky top-20">
                 <SidebarFilter 
-                  products={products} 
+                  products={baseProducts} 
                   onFilter={handleFilter} 
                 />
               </div>
@@ -28,16 +54,14 @@ const ProductList = () => {
             {/* Mobile Filter */}
             <div className="md:hidden w-full mb-4">
               <SidebarFilter 
-                products={products} 
+                products={baseProducts} 
                 onFilter={handleFilter} 
               />
             </div>
 
-            {/* Product Grid */}
             <main className="flex-1">
-              {/* Results Count */}
               <div className="mb-4 text-sm text-gray-600">
-                Showing {filteredProducts.length} of {products.length} products
+                Showing {filteredProducts.length} of {baseProducts.length} products
               </div>
 
               {/* Products */}
@@ -48,6 +72,21 @@ const ProductList = () => {
                       key={product.id}
                       className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow duration-300 p-3 flex flex-col"
                     >
+                      <div className="relative">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            isWishlisted(product.id) ? removeFromWishlist(product.id) : addToWishlist(product);
+                          }}
+                          aria-label="wishlist"
+                          className={`absolute z-10 top-2 right-2 rounded-full px-3 py-2 text-sm font-semibold shadow ${
+                            isWishlisted(product.id) ? 'bg-red-100 text-red-600' : 'bg-white text-gray-700'
+                          }`}
+                        >
+                          {isWishlisted(product.id) ? '♥' : '♡'}
+                        </button>
+                      </div>
                       <Link to={`/products/${product.id}`} className="flex flex-col h-full">
                         <div className="w-full h-48 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden">
                           <img
@@ -55,6 +94,7 @@ const ProductList = () => {
                             alt={product.name}
                             className="object-cover h-full w-full hover:scale-105 transition-transform duration-300"
                           />
+                          
                         </div>
                         <div className="mt-3 flex-grow">
                           <h3 className="text-sm font-medium text-gray-700 leading-tight line-clamp-2">

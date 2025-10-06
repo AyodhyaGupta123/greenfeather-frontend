@@ -10,16 +10,16 @@ const Cart = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const increaseQty = (id) => {
-    const item = cartItems.find(i => i.id === id);
-    if (item) updateQty(id, item.quantity + 1);
+  const increaseQty = (uniqueId) => {
+    const item = cartItems.find(i => i.uniqueId === uniqueId);
+    if (item) updateQty(uniqueId, item.quantity + 1);
   };
 
-  const decreaseOrDeleteItem = (id, quantity) => {
+  const decreaseOrDeleteItem = (uniqueId, quantity) => {
     if (quantity <= 1) {
-      removeItem(id);
+      removeItem(uniqueId);
     } else {
-      updateQty(id, quantity - 1);
+      updateQty(uniqueId, quantity - 1);
     }
   };
 
@@ -64,12 +64,12 @@ const Cart = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"> 
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            {cartItems.map((item, index) => (
+            {cartItems.map((item) => (
               <div
-                key={`${item.id}-${index}`} 
+                key={item.uniqueId} 
                 className="flex flex-col sm:flex-row p-4 sm:p-6 bg-white rounded-lg shadow hover:shadow-lg transition"
               >
-                <Link to={`/products/${item.id}`} className="flex-shrink-0">
+                <Link to={`/products/${item.id}`} state={{ product: item }} className="flex-shrink-0">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -80,7 +80,7 @@ const Cart = () => {
                 {/* Content */}
                 <div className="flex-1 flex flex-col justify-between sm:ml-6">
                   <div>
-                    <Link to={`/products/${item.id}`}>
+                    <Link to={`/products/${item.id}`} state={{ product: item }}>
                       <h3 className="text-lg font-semibold text-gray-800 line-clamp-3 hover:text-green-600 transition">
                         {item.name}
                       </h3>
@@ -95,9 +95,7 @@ const Cart = () => {
                       <p className="text-sm text-gray-600 mt-1">Brand: {item.brand}</p>
                     )}
                     
-                    <p className={`mt-1 text-sm font-medium ${
-                      item.stock !== false ? "text-green-600" : "text-red-500"
-                    }`}>
+                    <p className={`mt-1 text-sm font-medium ${item.stock !== false ? "text-green-600" : "text-red-500"}`}>
                       {item.stock !== false ? "In stock" : "Out of stock"}
                     </p>
                   </div>
@@ -108,13 +106,9 @@ const Cart = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          decreaseOrDeleteItem(item.id, item.quantity);
+                          decreaseOrDeleteItem(item.uniqueId, item.quantity);
                         }}
-                        className={`px-3 py-1 border rounded-lg transition ${
-                          item.quantity === 1
-                            ? "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                            : "border-green-300 text-gray-800 hover:bg-green-100"
-                        }`}
+                        className={`px-3 py-1 border rounded-lg transition ${item.quantity === 1 ? "border-red-500 text-red-500 hover:bg-red-500 hover:text-white" : "border-green-300 text-gray-800 hover:bg-green-100"}`}
                         title={item.quantity === 1 ? "Remove item" : "Decrease quantity"}
                       >
                         {item.quantity === 1 ? <FiTrash2 /> : <FiMinus />}
@@ -125,7 +119,7 @@ const Cart = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          increaseQty(item.id);
+                          increaseQty(item.uniqueId);
                         }}
                         className="px-3 py-1 border border-green-300 rounded-lg text-gray-800 hover:bg-green-100 transition"
                         title="Increase quantity"

@@ -123,6 +123,14 @@ const Login = () => {
 
         {/* Right Section */}
         <div className="w-1/2 bg-blue-50 flex flex-col justify-center items-center p-10">
+        <div className="w-full flex items-center justify-center py-6">
+        <img
+          src="https://your-logo-url.com/logo.png" // Replace with your logo URL
+          alt="GreenFeather Logo"
+          className="h-10 w-10 mr-3"
+        />
+        <h1 className="text-2xl font-bold text-blue-600">GreenFeather</h1>
+      </div>
           <img
             src="https://tse2.mm.bing.net/th/id/OIP.ziqmW9JBoD9NSSqj5M2juAHaFV?pid=Api&P=0&h=220"
             alt="Passwordless sign-in"

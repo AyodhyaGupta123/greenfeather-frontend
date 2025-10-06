@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 const CategorySection = () => {
   const categories = [
-    { name: 'Electronics', link: '/electronics', image: 'https://tse4.mm.bing.net/th/id/OIP.6NHdfr6OW9wU3z1FkunkNwAAAA?pid=Api&P=0&h=220' },
-    { name: 'Fashion', link: '/fashion', image: 'https://tse4.mm.bing.net/th/id/OIP.-sklPa0-5_R4tuf-M-uktgHaDt?pid=Api&P=0&h=220' },
-    { name: 'Home Appliances', link: '/home-kitchen', image: 'https://tse3.mm.bing.net/th/id/OIP.cBGraDJg8GOdq8TsXm8ReAHaDb?pid=Api&P=0&h=220' },
+    { name: 'Electronics', image: 'https://tse4.mm.bing.net/th/id/OIP.6NHdfr6OW9wU3z1FkunkNwAAAA?pid=Api&P=0&h=220' },
+    { name: 'Fashion', image: 'https://tse4.mm.bing.net/th/id/OIP.-sklPa0-5_R4tuf-M-uktgHaDt?pid=Api&P=0&h=220' },
+    { name: 'Home & Kitchen', image: 'https://tse3.mm.bing.net/th/id/OIP.cBGraDJg8GOdq8TsXm8ReAHaDb?pid=Api&P=0&h=220' },
   ];
 
   return (
@@ -25,7 +25,7 @@ const CategorySection = () => {
         {/* Category Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {categories.map((category, index) => (
-            <Link to={category.link} key={index}>
+            <Link to={`/products?category=${encodeURIComponent(category.name)}`} key={index}>
               <motion.div
                 className="relative group overflow-hidden rounded-2xl shadow-lg cursor-pointer"
                 initial={{ opacity: 0, y: 30 }}

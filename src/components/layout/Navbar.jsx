@@ -1,14 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, ShoppingCart, MapPin, ChevronDown } from "lucide-react";
-import { useCart } from "../../context/CartContext"
+import { useCart } from "../../context/CartContext";
+import { LoadScript, Autocomplete } from "@react-google-maps/api";
 
 const Navbar = () => {
-  const { items } = useCart();
+  const { items, getTotalItems } = useCart();
   const [searchCategory, setSearchCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null);
+
+  // Location states
+  const [location, setLocation] = useState("Delivering to India");
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  const handlePlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+      if (place.formatted_address) {
+        setLocation(place.formatted_address);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const res = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+            }`
+          );
+          const data = await res.json();
+          if (data.status === "OK" && data.results.length > 0) {
+            setLocation(data.results[0].formatted_address);
+          }
+        } catch (err) {
+          console.error("Geocoding error:", err);
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -30,7 +66,7 @@ const Navbar = () => {
 
     // Listen for storage events (works across tabs)
     window.addEventListener("storage", checkAuth);
-    
+
     // Custom event for same-tab updates
     window.addEventListener("authChange", checkAuth);
 
@@ -43,7 +79,11 @@ const Navbar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      console.log("Searching for:", searchTerm, "in", searchCategory);
+      const params = new URLSearchParams();
+      params.set("search", searchTerm.trim());
+      if (searchCategory && searchCategory !== "All")
+        params.set("category", searchCategory);
+      window.location.href = `/products?${params.toString()}`;
     }
   };
 
@@ -89,20 +129,28 @@ const Navbar = () => {
           onClick={() => (window.location.href = "/")}
           className="flex-shrink-0 cursor-pointer"
         >
-          <img
-            src="/imgs/navlogo.png"
-            alt="GreenFeather"
-            className="h-8 md:h-10 bg-[#18641f] transform transition-transform duration-300"
-          />
+         <h2>GreenFeather</h2>
         </div>
 
-        {/* Location - Hidden on mobile */}
-        <div className="hidden lg:flex items-center flex-shrink-0">
-          <MapPin className="text-lg mr-1" />
-          <div className="leading-tight">
-            <p className="text-xs text-gray-300">Delivering to India</p>
-            <p className="text-sm font-semibold">Update location</p>
-          </div>
+        {/* Location with Google Maps Autocomplete */}
+        <div className="hidden lg:flex items-center flex-shrink-0 max-w-[155px]">
+          <MapPin className="text-lg" />
+          <LoadScript
+            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+            libraries={["places"]}
+          >
+            <Autocomplete
+              onLoad={(auto) => setAutocomplete(auto)}
+              onPlaceChanged={handlePlaceChanged}
+            >
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="px-2 py-1 text-white text-sm font-semibold rounded w-full whitespace-normal break-words"
+              />
+            </Autocomplete>
+          </LoadScript>
         </div>
 
         {/* Search Bar */}
@@ -156,7 +204,14 @@ const Navbar = () => {
           onMouseEnter={() => setDropdownOpen(true)}
           onMouseLeave={() => setDropdownOpen(false)}
         >
-          <span className="text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]" title={user ? `Hello, ${user.name || user.user?.name || "User"}` : "Hello, sign in"}>
+          <span
+            className="text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]"
+            title={
+              user
+                ? `Hello, ${user.name || user.user?.name || "User"}`
+                : "Hello, sign in"
+            }
+          >
             {user ? `Hello, ${getUserName()}` : "Hello, sign in"}
           </span>
           <span className="text-sm font-semibold flex items-center whitespace-nowrap">
@@ -299,7 +354,9 @@ const Navbar = () => {
         {/* Orders - Hidden on small screens */}
         <div className="hidden md:flex flex-col flex-shrink-0 cursor-pointer">
           <span className="text-xs">Returns</span>
-          <span className="text-sm font-semibold whitespace-nowrap">& Orders</span>
+          <span className="text-sm font-semibold whitespace-nowrap">
+            & Orders
+          </span>
         </div>
 
         {/* Cart */}
@@ -310,7 +367,7 @@ const Navbar = () => {
           <div className="relative">
             <ShoppingCart className="text-xl md:text-2xl" />
             <span className="absolute -top-2 -right-2 bg-[#f08804] text-black rounded-full text-xs px-1">
-              0
+              {getTotalItems()}
             </span>
           </div>
           <span className="hidden sm:inline ml-2 font-semibold text-sm whitespace-nowrap">
