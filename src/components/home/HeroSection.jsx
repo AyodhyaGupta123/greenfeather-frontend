@@ -18,8 +18,6 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
       ctaText: "Shop Now",
       ctaLink: "/shop",
     },
-<<<<<<< HEAD
-=======
     {
       imageUrl: "https://media.istockphoto.com/id/1439085663/photo/desktop-computers-and-equipment.webp?a=1&b=1&s=612x612&w=0&k=20&c=YT5BrFoNgaj-H5TFL1D_NTPWXhIniix2cYuYuQOIUcw=",
       title: "Discover the Latest Trends",
@@ -34,7 +32,6 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
       ctaText: "Shop Now",
       ctaLink: "/shop",
     },
->>>>>>> ayodhya
   ];
 
   useEffect(() => {

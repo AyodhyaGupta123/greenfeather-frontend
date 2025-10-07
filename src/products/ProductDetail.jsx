@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import products from "../data/products";
 import Layout from "../components/layout/Layout";
 import { useCart } from "../context/CartContext";
-import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { ShoppingCart, Heart, Star, Truck, RotateCcw, Shield } from "lucide-react";
 

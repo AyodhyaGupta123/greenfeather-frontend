@@ -125,9 +125,9 @@ const Navbar = () => {
   useEffect(() => {
     try {
       const raw = localStorage.getItem("auth");
-      setAuth(raw ? JSON.parse(raw) : null);
+      setUser(raw ? JSON.parse(raw) : null); 
     } catch {
-      setAuth(null);
+      setUser(null); 
     }
   }, []);
 
@@ -254,9 +254,12 @@ const Navbar = () => {
                         Your Account
                       </h3>
                       <ul className="space-y-2">
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Account
-                        </li>
+                      <li
+  onClick={() => (window.location.href = "/account")}
+  className="text-sm hover:text-[#f08804] hover:underline cursor-pointer"
+>
+  Account
+</li>
                         <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
                           Orders
                         </li>
@@ -327,9 +330,12 @@ const Navbar = () => {
                         Your Account
                       </h3>
                       <ul className="space-y-2">
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Account
-                        </li>
+                      <li
+  onClick={() => (window.location.href = "/account")}
+  className="text-sm hover:text-[#f08804] hover:underline cursor-pointer"
+>
+  Account
+</li>
                         <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
                           Orders
                         </li>

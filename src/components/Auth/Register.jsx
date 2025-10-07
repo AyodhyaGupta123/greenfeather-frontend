@@ -12,18 +12,12 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-<<<<<<< HEAD
-  const API_BASE = (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL)
-    ? `${import.meta.env.VITE_API_URL}/api/users`
-    : "http://localhost:5000/api/users";
-=======
   const API_BASE =
     typeof import.meta !== "undefined" &&
     import.meta.env &&
     import.meta.env.VITE_API_URL
       ? `${import.meta.env.VITE_API_URL}/api/users`
       : "http://localhost:5000/api/users";
->>>>>>> ayodhya
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,13 +39,9 @@ const Register = () => {
       });
       const contentType = response.headers.get("content-type") || "";
       const isJson = contentType.includes("application/json");
-<<<<<<< HEAD
-      const data = isJson ? await response.json() : { message: await response.text() };
-=======
       const data = isJson
         ? await response.json()
         : { message: await response.text() };
->>>>>>> ayodhya
       if (!response.ok) throw new Error(data?.message || "Signup failed");
       localStorage.setItem("auth", JSON.stringify(data));
       navigate("/", { replace: true });
@@ -71,62 +61,11 @@ const Register = () => {
             <h2 className="text-3xl font-bold mb-4">Sign up</h2>
             <p className="text-gray-500 mb-6">Create your account</p>
 
-<<<<<<< HEAD
-          {error && (
-            <div className="mb-4 text-red-600 bg-red-50 border border-red-200 rounded p-3">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
-                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                autoComplete="name"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                autoComplete="email"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create a password"
-                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                autoComplete="new-password"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full p-3 rounded-md text-white ${loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"}`}
-            >
-              {loading ? "Creating account..." : "Sign Up"}
-            </button>
-          </form>
-=======
             {error && (
               <div className="mb-4 text-red-600 bg-red-50 border border-red-200 rounded p-3">
                 {error}
               </div>
             )}
->>>>>>> ayodhya
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
