@@ -18,6 +18,23 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
       ctaText: "Shop Now",
       ctaLink: "/shop",
     },
+<<<<<<< HEAD
+=======
+    {
+      imageUrl: "https://media.istockphoto.com/id/1439085663/photo/desktop-computers-and-equipment.webp?a=1&b=1&s=612x612&w=0&k=20&c=YT5BrFoNgaj-H5TFL1D_NTPWXhIniix2cYuYuQOIUcw=",
+      title: "Discover the Latest Trends",
+      subtitle: "Upgrade your lifestyle with our premium collections, handpicked for you.",
+      ctaText: "Shop Now",
+      ctaLink: "/shop",
+    },
+    {
+      imageUrl: "https://media.istockphoto.com/id/1313880838/photo/3d-rendering-of-online-shopping-and-advertising-concept.webp?a=1&b=1&s=612x612&w=0&k=20&c=0Kb4uMNqfG0k6OmfVgWNmRQbyosResbSBDFMKjgYrbk=",
+      title: "Discover the Latest Trends",
+      subtitle: "Upgrade your lifestyle with our premium collections, handpicked for you.",
+      ctaText: "Shop Now",
+      ctaLink: "/shop",
+    },
+>>>>>>> ayodhya
   ];
 
   useEffect(() => {

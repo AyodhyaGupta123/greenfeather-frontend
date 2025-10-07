@@ -1,75 +1,126 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { categories } from "../../data/categories";
-import { homeMenu } from "../../data/homeMenu";
-import {
-  FaBars,
-  FaTimes,
-  FaSearch,
-  FaChevronDown,
-  FaShoppingCart,
-  FaHeart,
-  FaUser,
-} from "react-icons/fa";
-
-import {
-  RiSearchLine,
-  RiSearchFill,
-  RiShoppingCartLine,
-  RiShoppingCartFill,
-  RiHeartLine,
-  RiHeartFill,
-  RiUserLine,
-  RiUserFill,
-} from "react-icons/ri";
+import { motion } from "framer-motion";
+import { Search, ShoppingCart, MapPin, ChevronDown } from "lucide-react";
+import { useCart } from "../../context/CartContext";
+import { LoadScript, Autocomplete } from "@react-google-maps/api";
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const [auth, setAuth] = useState(null);
-  const [showSearch, setShowSearch] = useState(false);
-  const [mobileHomeOpen, setMobileHomeOpen] = useState(false);
-  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const { items, getTotalItems } = useCart();
+  const [searchCategory, setSearchCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
+  // Location states
+  const [location, setLocation] = useState("Delivering to India");
+  const [autocomplete, setAutocomplete] = useState(null);
 
-  const navigate = useNavigate();
-
-  const navItems = [
-    { path: "/", label: "Home" },
-    { path: "/products", label: "Products" },
-    { path: "/about", label: "About" },
-    { path: "/contact", label: "Contact" },
-  ];
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const isActive = (path) => {
-    return window.location.pathname === path;
-  };
-
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY;
-
-    setIsScrolled(currentScrollY > 10);
-
-    if (currentScrollY > lastScrollY) {
-      setShowHeader(false);
-    } else {
-      setShowHeader(true);
+  const handlePlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+      if (place.formatted_address) {
+        setLocation(place.formatted_address);
+      }
     }
-
-    setLastScrollY(currentScrollY);
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const res = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+            }`
+          );
+          const data = await res.json();
+          if (data.status === "OK" && data.results.length > 0) {
+            setLocation(data.results[0].formatted_address);
+          }
+        } catch (err) {
+          console.error("Geocoding error:", err);
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      // localStorage use kar rahe hain instead of sessionStorage
+      const authData = localStorage.getItem("auth");
+      if (authData) {
+        try {
+          const parsedAuth = JSON.parse(authData);
+          setUser(parsedAuth);
+        } catch (err) {
+          console.error("Error parsing auth data:", err);
+          localStorage.removeItem("auth");
+        }
+      }
+    };
+
+    // Initial check
+    checkAuth();
+
+    // Listen for storage events (works across tabs)
+    window.addEventListener("storage", checkAuth);
+
+    // Custom event for same-tab updates
+    window.addEventListener("authChange", checkAuth);
+
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+      window.removeEventListener("authChange", checkAuth);
+    };
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      const params = new URLSearchParams();
+      params.set("search", searchTerm.trim());
+      if (searchCategory && searchCategory !== "All")
+        params.set("category", searchCategory);
+      window.location.href = `/products?${params.toString()}`;
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth");
+    setUser(null);
+
+    // Trigger custom event
+    window.dispatchEvent(new Event("authChange"));
+    window.location.href = "/";
+  };
+
+  const navigateToLogin = () => {
+    window.location.href = "/login";
+  };
+
+  const navigateToRegister = () => {
+    window.location.href = "/register";
+  };
+
+  const topMenu = [
+    { name: "Sell", link: "/sell" },
+    { name: "Bestsellers", link: "/bestsellers" },
+    { name: "Today's Deals", link: "/deals" },
+    { name: "Mobiles", link: "/products" },
+    { name: "Electronics", link: "/electronics" },
+    { name: "New Releases", link: "/trends" },
+    { name: "Customer Service", link: "/customer-service" },
+    { name: "Fashion", link: "/fashion" },
+    { name: "Home & Kitchen", link: "/home-kitchen" },
+  ];
+
+  const getUserName = () => {
+    if (!user) return null;
+    const name = user.name || user.user?.name || "User";
+    return name.length > 12 ? name.substring(0, 12) + "..." : name;
+  };
 
   useEffect(() => {
     try {
@@ -81,288 +132,279 @@ const Navbar = () => {
   }, []);
 
   return (
-    <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          showHeader ? "translate-y-0" : "-translate-y-full"
-        } ${
-          isScrolled
-            ? "bg-white shadow-md"
-            : "bg-gradient-to-r from-green-100 via-green-50 to-green-100 backdrop-blur-sm"
-        }`}
-      >
-        <div className="max-w-[90%] mx-auto flex justify-between items-center py-5">
-          <Link
-            to="/"
-            className="text-3xl font-medium cursor-pointer text-transparent bg-clip-text bg-gradient-to-r from-green-700 via-green-600 to-green-500 hover:from-green-600 hover:via-green-500 hover:to-green-400 transition-colors"
-          >
-            GreenFeather
-          </Link>
-
-          {/*== Desktop Menu with Products Hover ==*/}
-          <div className="hidden md:flex space-x-12 relative">
-            {navItems.map((item) => (
-              <div key={item.path} className="relative group">
-                <Link
-                  to={item.path}
-                  className={`relative font-normal cursor-pointer flex items-center space-x-1 pb-1 ${isActive(item.path) ? "text-green-700" : "text-slate-800"}group`} >
-                  <span className="relative">
-                    {item.label}
-
-                    <span
-                      className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-green-700 transition-all duration-300 group-hover:w-full"></span>
-                  </span>
-
-                  {(item.label === "Products" || item.label === "Home") && (
-                    <FaChevronDown className="text-sm ml-1 transition-transform duration-300 group-hover:rotate-180" />
-                  )}
-                </Link>
-
-                {/* ===== Home Dropdown ===== */}
-                {item.label === "Home" && (
-                  <div className="  absolute left-1/2 transform -translate-x-1/2 top-12 w-[70vw] max-w-6xl bg-white shadow-lg rounded-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-[999] p-6 overflow-y-auto">
-                    <div className="grid grid-cols-4 gap-6">
-                      {homeMenu.map((section, index) => (
-                        <div key={index}>
-                          <h3 className="font-semibold text-gray-900 text-base mb-3 border-b border-gray-200 pb-1">
-                            {section.title}
-                          </h3>
-
-                          <div className="flex flex-col space-y-2">
-                            {section.subcategories.map((sub, idx) => (
-                              <Link
-                                key={idx}
-                                to={`/home/${section.title
-                                  .toLowerCase()
-                                  .replace(/\s+/g, "-")}/${sub
-                                  .toLowerCase()
-                                  .replace(/\s+/g, "-")}`}
-                                className="text-sm text-gray-600 hover:text-green-700 transition-colors"
-                              >
-                                {sub}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ===== Products Dropdown ===== */}
-                {item.label === "Products" && (
-                  <div className="absolute left-1/2 transform -translate-x-1/2 top-12 w-[70vw] max-w-6xl bg-white shadow-lg rounded-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-[999] p-6 overflow-y-auto">
-                    <div className="grid grid-cols-4 gap-6">
-                      {categories.map((cat, index) => (
-                        <div key={index}>
-                          <h3 className="font-semibold text-gray-900 text-base mb-3 border-b border-gray-200 pb-1">
-                            {cat.title}
-                          </h3>
-                          <div className="flex flex-col space-y-2">
-                            {cat.subcategories.map((sub, idx) => (
-                              <Link
-                                key={idx}
-                                to={`/category/${cat.title
-                                  .toLowerCase()
-                                  .replace(/\s+/g, "-")}/${sub
-                                  .toLowerCase()
-                                  .replace(/\s+/g, "-")}`}
-                                className="text-sm text-gray-600 hover:text-green-700 transition-colors"
-                              >
-                                {sub}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/*== Right Side Icons */}
-          <div className="flex items-center text-gray-700">
-            <div className="hidden md:flex items-center space-x-4">
-              <button
-                type="button"
-                onClick={() => setShowSearch(true)}
-                className="group relative p-2 rounded-full hover:bg-green-50 text-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30 group-hover:text-green-700"
-                aria-label="Open search"
-                title="Search"
-              >
-                <RiSearchLine className="text-[20px] group-hover:hidden" />
-                <RiSearchFill className="text-[20px] hidden group-hover:block" />
-              </button>
-
-              <Link to="/cart">
-                <button
-                  type="button"
-                  className="group relative p-2 rounded-full hover:bg-green-50 text-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30 group-hover:text-green-700"
-                  aria-label="View cart"
-                  title="Cart"
-                >
-                  <RiShoppingCartLine className="text-[20px] group-hover:hidden" />
-                  <RiShoppingCartFill className="text-[20px] hidden group-hover:block" />
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1.5 text-[10px] leading-[16px] text-white bg-green-600 rounded-full text-center">
-                    0
-                  </span>
-                </button>
-              </Link>
-
-              {auth && (
-                <Link
-                  to="/wishlist"
-                  className="group relative p-2 rounded-full hover:bg-emerald-50 text-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/30 group-hover:text-emerald-600"
-                  aria-label="View wishlist"
-                  title="Wishlist"
-                >
-                  <RiHeartLine className="text-[20px] group-hover:hidden" />
-                  <RiHeartFill className="text-[20px] hidden group-hover:block" />
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1.5 text-[10px] leading-[16px] text-white bg-pink-600 rounded-full text-center">
-                    0
-                  </span>
-                </Link>
-              )}
-
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowAccountMenu((v) => !v)}
-                  className="group relative p-2 rounded-full hover:bg-green-50 text-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30 group-hover:text-green-700"
-                  aria-label="Account"
-                  title="Account"
-                >
-                <RiUserLine className="text-[20px] group-hover:hidden" />
-                <RiUserFill className="text-[20px] hidden group-hover:block" />
-                </button>
-                {showAccountMenu && (
-                  <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                    {auth ? (
-                      <>
-                        <div className="px-4 py-3 border-b">
-                          <div className="text-sm text-gray-500">Signed in as</div>
-                          <div className="text-sm font-medium text-gray-900 truncate">{auth?.name || auth?.email}</div>
-                        </div>
-                        <button
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50"
-                          onClick={() => { setShowAccountMenu(false); navigate("/wishlist"); }}
-                        >
-                          Wishlist
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50"
-                          onClick={() => { setShowAccountMenu(false); navigate("/cart"); }}
-                        >
-                          Cart
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50"
-                          onClick={() => {
-                            localStorage.removeItem("auth");
-                            setAuth(null);
-                            setShowAccountMenu(false);
-                            navigate("/login");
-                          }}
-                        >
-                          Sign out
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        className="w-full text-left px-4 py-2 hover:bg-gray-50"
-                        onClick={() => { setShowAccountMenu(false); navigate("/login"); }}
-                      >
-                        Sign in
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="hidden md:block h-6 w-px bg-gray-200 mx-2" />
-
-            {/*== Mobile Menu Toggle== */}
-            <button
-              onClick={toggleMobileMenu}
-              className="md:hidden p-2 rounded-full hover:bg-green-50 text-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30"
-              aria-label="Toggle menu"
-              title="Menu"
-            >
-              {isMobileMenuOpen ? (
-                <FaTimes className="text-[20px]" />
-              ) : (
-                <FaBars className="text-[20px]" />
-              )}
-            </button>
-          </div>
+    <div className="w-full">
+      <div className="bg-[#0f6416] text-white px-3 md:px-6 py-2 flex items-center justify-between fixed top-0 left-0 right-0 z-50 gap-2 md:gap-4">
+        <div
+          onClick={() => (window.location.href = "/")}
+          className="flex-shrink-0 cursor-pointer"
+        >
+         <h2>GreenFeather</h2>
         </div>
 
-        {/*== Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
-            <div className="px-4 py-2 space-y-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`block py-2 px-4 rounded-lg font-semibold transition-colors ${
-                    isActive(item.path)
-                      ? "text-green-700 bg-green-50"
-                      : "hover:text-green-700 hover:bg-green-50"
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/*== Full-screen Search Overlay */}
-      {showSearch && (
-        <div className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-md flex flex-col items-center justify-start pt-24 p-8 transition-all duration-500">
-          <button
-            className="absolute top-8 right-8 text-3xl text-gray-700 hover:text-green-500 transition-colors"
-            onClick={() => setShowSearch(false)}
-            aria-label="Close search"
+        {/* Location with Google Maps Autocomplete */}
+        <div className="hidden lg:flex items-center flex-shrink-0 max-w-[155px]">
+          <MapPin className="text-lg" />
+          <LoadScript
+            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+            libraries={["places"]}
           >
-            <FaTimes />
-          </button>
-
-          <div className="flex flex-col items-center w-full max-w-3xl">
-            <div className="flex items-center w-full border-b-2 border-gray-300 focus-within:border-green-500 transition-colors">
-              <FaSearch className="text-gray-400 mr-3 text-xl" />
+            <Autocomplete
+              onLoad={(auto) => setAutocomplete(auto)}
+              onPlaceChanged={handlePlaceChanged}
+            >
               <input
                 type="text"
-                autoFocus
-                placeholder="Search for products..."
-                className="w-full py-3 text-lg md:text-xl placeholder-gray-400 focus:outline-none bg-transparent"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="px-2 py-1 text-white text-sm font-semibold rounded w-full whitespace-normal break-words"
               />
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full text-gray-700">
-              <div className="flex items-center gap-3 cursor-pointer hover:text-green-500 transition-colors">
-                <FaShoppingCart className="text-green-600" />
-                <span>Best Sellers</span>
-              </div>
-              <div className="flex items-center gap-3 cursor-pointer hover:text-green-500 transition-colors">
-                <FaHeart className="text-pink-500" />
-                <span>Eco-Friendly Picks</span>
-              </div>
-              <div className="flex items-center gap-3 cursor-pointer hover:text-green-500 transition-colors">
-                <FaUser className="text-blue-500" />
-                <span>New Arrivals</span>
-              </div>
-            </div>
-          </div>
+            </Autocomplete>
+          </LoadScript>
         </div>
-      )}
-    </>
+
+        {/* Search Bar */}
+        <div className="flex flex-1 max-w-3xl h-10 overflow-hidden shadow-lg rounded-lg border transition-all duration-300 hover:shadow-2xl bg-white">
+          <motion.select
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+            className="bg-gray-100 text-black px-2 md:px-3 text-xs md:text-sm font-semibold outline-none cursor-pointer transition-colors duration-300"
+            whileHover={{ scale: 1 }}
+            whileFocus={{ scale: 1 }}
+          >
+            <option>All</option>
+            <option>Appliances</option>
+            <option>Mobiles</option>
+            <option>Electronics</option>
+            <option>Fashion</option>
+          </motion.select>
+
+          <motion.input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search GreenFeather"
+            className="flex-1 px-2 md:px-4 text-black text-xs md:text-sm outline-none bg-white font-thin placeholder-gray-500"
+          />
+
+          <motion.button
+            onClick={handleSearch}
+            className="px-3 md:px-5 flex items-center justify-center bg-gradient-to-r from-[#f4ae4c] to-[#f3a847] text-black font-semibold rounded-r-lg shadow-md hover:shadow-xl transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Search className="text-sm md:text-base" />
+          </motion.button>
+        </div>
+
+        {/* Language - Hidden on small screens */}
+        <div className="hidden md:flex items-center space-x-1 flex-shrink-0 cursor-pointer">
+          <img
+            src="https://flagcdn.com/w20/in.png"
+            alt="India Flag"
+            className="h-4"
+          />
+          <span className="text-sm font-semibold">EN</span>
+          <ChevronDown className="text-xl" />
+        </div>
+
+        {/* Account & Lists */}
+        <div
+          className="hidden md:flex flex-col relative flex-shrink-0 cursor-pointer min-w-fit"
+          onMouseEnter={() => setDropdownOpen(true)}
+          onMouseLeave={() => setDropdownOpen(false)}
+        >
+          <span
+            className="text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]"
+            title={
+              user
+                ? `Hello, ${user.name || user.user?.name || "User"}`
+                : "Hello, sign in"
+            }
+          >
+            {user ? `Hello, ${getUserName()}` : "Hello, sign in"}
+          </span>
+          <span className="text-sm font-semibold flex items-center whitespace-nowrap">
+            Account & Lists <ChevronDown className="text-lg ml-1" />
+          </span>
+
+          {dropdownOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white text-black w-[280px] md:w-[480px] shadow-2xl rounded-lg border border-gray-200 z-50"
+            >
+              {user ? (
+                <div className="p-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
+                        Your Lists
+                      </h3>
+                      <ul className="space-y-2">
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Create a List
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Find a List or Registry
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
+                        Your Account
+                      </h3>
+                      <ul className="space-y-2">
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Account
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Orders
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Recommendations
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Watchlist
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Content & Devices
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Subscribe & Save Items
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Memberships & Subscriptions
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <button
+                      onClick={handleLogout}
+                      className="text-sm text-[#0f6416] hover:text-[#f08804] cursor-pointer font-semibold px-2 py-1 border border-[#0f6416] hover:border-[#f08804] rounded-md transition-all duration-200"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-6">
+                  <div className="flex flex-col items-center mb-4">
+                    <button
+                      onClick={navigateToLogin}
+                      className="w-full bg-gradient-to-b from-[#0da91f] to-[#05921c] hover:from-[#16da3d] cursor-pointer hover:to-[#14bc22] text-black py-2 px-4 rounded-md shadow-sm font-semibold text-sm transition-all duration-200"
+                    >
+                      Sign in
+                    </button>
+                    <p className="text-xs text-gray-600 mt-2">
+                      New customer?{" "}
+                      <span
+                        onClick={navigateToRegister}
+                        className="text-[#0066c0] hover:text-[#13760a] hover:underline cursor-pointer"
+                      >
+                        Start here.
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 border-t border-gray-200 pt-4">
+                    <div>
+                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
+                        Your Lists
+                      </h3>
+                      <ul className="space-y-2">
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Create a List
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Find a List or Registry
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
+                        Your Account
+                      </h3>
+                      <ul className="space-y-2">
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Account
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Orders
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Recommendations
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Watchlist
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Kindle Unlimited
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Content & Devices
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Subscribe & Save Items
+                        </li>
+                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
+                          Memberships & Subscriptions
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Orders - Hidden on small screens */}
+        <div className="hidden md:flex flex-col flex-shrink-0 cursor-pointer">
+          <span className="text-xs">Returns</span>
+          <span className="text-sm font-semibold whitespace-nowrap">
+            & Orders
+          </span>
+        </div>
+
+        {/* Cart */}
+        <div
+          onClick={() => (window.location.href = "/cart")}
+          className="relative flex items-center flex-shrink-0 cursor-pointer"
+        >
+          <div className="relative">
+            <ShoppingCart className="text-xl md:text-2xl" />
+            <span className="absolute -top-2 -right-2 bg-[#f08804] text-black rounded-full text-xs px-1">
+              {getTotalItems()}
+            </span>
+          </div>
+          <span className="hidden sm:inline ml-2 font-semibold text-sm whitespace-nowrap">
+            Cart
+          </span>
+        </div>
+      </div>
+
+      {/* Top Menu */}
+      <div className="bg-[#073903] text-white px-3 md:px-6 py-2 flex items-center space-x-4 md:space-x-6 text-sm overflow-x-auto mt-[52px] md:mt-[56px]">
+        <button className="flex items-center font-semibold whitespace-nowrap">
+          ☰ All
+        </button>
+        {topMenu.map((item, idx) => (
+          <a
+            key={idx}
+            href={item.link}
+            className="hover:underline cursor-pointer whitespace-nowrap text-xs md:text-sm"
+          >
+            {item.name}
+          </a>
+        ))}
+
+        <span className="ml-auto text-yellow-400 font-semibold whitespace-nowrap text-xs md:text-sm">
+          Great Indian Festival Live now
+        </span>
+      </div>
+    </div>
   );
 };
 

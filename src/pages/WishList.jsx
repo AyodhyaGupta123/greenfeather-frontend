@@ -1,42 +1,15 @@
-import React, { useState } from "react";
-import { FiTrash2, FiShoppingCart, FiHeart } from "react-icons/fi";
+import React from "react";
+import { FiTrash2, FiShoppingCart, FiHeart, FiShare2 } from "react-icons/fi"; // Added FiShare2 for summary actions
 import Layout from "../components/layout/Layout";
+import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 
 const Wishlist = () => {
-  const [wishlistItems, setWishlistItems] = useState([
-    {
-      id: 1,
-      name: "iPhone 16 128 GB: 5G Mobile Phone with Camera Control, A18 Chip and a Big Boost in Battery Life. Works with AirPods; White",
-      price: 110000,
-      image: "/imgs/cart/cart_item_1.jpeg",
-      inStock: true,
-      color: "White",
-    },
-    {
-      id: 2,
-      name: "Reusable Water Bottle - 1L, BPA Free",
-      price: 500,
-      image: "/imgs/cart/cart_item_2.jpeg",
-      inStock: true,
-      color: "Blue",
-    },
-    {
-      id: 3,
-      name: "Luxury Leather Office Chair - Ergonomic Design",
-      price: 18500,
-      image: "/imgs/cart/cart_item_3.jpeg", 
-      inStock: false,
-      color: "Black",
-    },
-  ]);
-
-  const removeFromWishlist = (id) => {
-    setWishlistItems(wishlistItems.filter((item) => item.id !== id));
-  };
+  const { items: wishlistItems, remove: removeFromWishlist } = useWishlist();
+  const { addItem } = useCart();
 
   const moveToCart = (item) => {
-    // Logic to add to cart
-    console.log(`Moved "${item.name}" to cart!`);
+    addItem(item, 1);
     removeFromWishlist(item.id);
   };
 
@@ -67,8 +40,12 @@ const Wishlist = () => {
             </h1>
             <div className="mt-6 flex gap-4 justify-center">
               <button
-                onClick={() => (window.location.href = "/")}
-                className="px-5 py-2 bg-white text-green-700 font-semibold rounded-full shadow-lg hover:bg-green-500 hover:text-white transition transform hover:scale-105"
+                onClick={() => wishlistItems.filter(i => i.inStock).forEach(moveToCart)}
+                disabled={itemsInStock === 0}
+                className={`mt-6 w-full flex items-center justify-center font-bold py-3 rounded-lg transition-colors duration-200 text-white shadow-xl shadow-green-200/50
+                           ${itemsInStock > 0
+                             ? 'bg-green-500 hover:bg-green-600'
+                             : 'bg-gray-400 cursor-not-allowed'}`}
               >
                 Home
               </button>

@@ -2,6 +2,7 @@
 import React from "react";
 import Header from "../../common/Header";
 import Footer from "../../common/Footer";
+import SidebarFilter from "../../common/SidebarFilter";
 
 const Layout = ({ children }) => {
   return (

@@ -6,7 +6,7 @@ const Header = () => {
     <header>
       <Navbar />
       {/* Spacer to offset fixed navbar height */}
-      <div className="pt-14 md:pt-15" />
+    
     </header>
   );
 };
