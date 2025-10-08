@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { FiUser, FiCreditCard, FiGift, FiHome, FiChevronDown } from "react-icons/fi";
+import {
+  FiUser,
+  FiCreditCard,
+  FiGift,
+  FiHome,
+  FiChevronDown,
+} from "react-icons/fi";
 import Layout from "../components/layout/Layout";
 
 const ProfileDashboard = () => {
@@ -15,7 +21,10 @@ const ProfileDashboard = () => {
   };
 
   const menu = [
-    { section: "My Orders", items: [{ name: "Order History", icon: <FiHome /> }] },
+    {
+      section: "My Orders",
+      items: [{ name: "Order History", icon: <FiHome /> }],
+    },
     {
       section: "Account Settings",
       items: [
@@ -36,7 +45,8 @@ const ProfileDashboard = () => {
 
   const faqs = [
     {
-      question: "What happens when I update my email address (or mobile number)?",
+      question:
+        "What happens when I update my email address (or mobile number)?",
       answer:
         "Your login email id (or mobile number) changes, likewise. You'll receive all your account related communication on your updated email address (or mobile number).",
     },
@@ -63,7 +73,6 @@ const ProfileDashboard = () => {
   return (
     <Layout>
       <div className="min-h-screen flex bg-green-100">
-        {/* Sidebar */}
         <aside className="w-72 bg-white shadow-lg p-6 space-y-8 flex flex-col">
           <div className="flex flex-col items-center">
             <img
@@ -78,7 +87,9 @@ const ProfileDashboard = () => {
           <div className="space-y-6">
             {menu.map((section, idx) => (
               <div key={idx}>
-                <p className="text-gray-400 uppercase text-xs mb-2">{section.section}</p>
+                <p className="text-gray-400 uppercase text-xs mb-2">
+                  {section.section}
+                </p>
                 <div className="space-y-2">
                   {section.items.map((item, i) => (
                     <button
@@ -86,11 +97,15 @@ const ProfileDashboard = () => {
                       className="flex items-center justify-between w-full px-4 py-2 text-gray-700 hover:bg-green-50 rounded-lg transition duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-green-500 text-lg">{item.icon}</span>
+                        <span className="text-green-500 text-lg">
+                          {item.icon}
+                        </span>
                         <span className="font-medium">{item.name}</span>
                       </div>
                       {item.value && (
-                        <span className="text-green-600 font-semibold">{item.value}</span>
+                        <span className="text-green-600 font-semibold">
+                          {item.value}
+                        </span>
                       )}
                     </button>
                   ))}
@@ -100,71 +115,85 @@ const ProfileDashboard = () => {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 p-10 space-y-8">
-          {/* Personal Info Card */}
           <div className="bg-white rounded-2xl shadow-md p-8 space-y-6">
-                {/* Header */}
-                <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
-                    <button className="text-green-600 font-semibold hover:underline">Edit</button>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Personal Information
+              </h2>
+              <button className="text-green-600 font-semibold hover:underline">
+                Edit
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={user.firstName}
+                  readOnly
+                  className="border border-gray-200 rounded-lg px-4 py-3 text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                />
+                <input
+                  type="text"
+                  value={user.lastName}
+                  readOnly
+                  className="border border-gray-200 rounded-lg px-4 py-3 text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-500 mb-1 font-medium">
+                  Gender
+                </label>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2 text-gray-700">
+                    <input
+                      type="radio"
+                      checked={user.gender === "Male"}
+                      disabled
+                      className="accent-green-500"
+                    />{" "}
+                    Male
+                  </label>
+                  <label className="flex items-center gap-2 text-gray-700">
+                    <input
+                      type="radio"
+                      checked={user.gender === "Female"}
+                      disabled
+                      className="accent-green-500"
+                    />{" "}
+                    Female
+                  </label>
                 </div>
+              </div>
 
-                {/* Content */}
-                <div className="space-y-4">
-                    {/* Name */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input
-                        type="text"
-                        value={user.firstName}
-                        readOnly
-                        className="border border-gray-200 rounded-lg px-4 py-3 text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
-                    />
-                    <input
-                        type="text"
-                        value={user.lastName}
-                        readOnly
-                        className="border border-gray-200 rounded-lg px-4 py-3 text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
-                    />
-                    </div>
+              {/* Email */}
+              <div>
+                <label className="block text-gray-500 mb-1 font-medium">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={user.email}
+                  readOnly
+                  className="border border-gray-200 rounded-lg px-4 py-3 w-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                />
+              </div>
 
-                    {/* Gender */}
-                    <div>
-                    <label className="block text-gray-500 mb-1 font-medium">Gender</label>
-                    <div className="flex gap-6">
-                        <label className="flex items-center gap-2 text-gray-700">
-                        <input type="radio" checked={user.gender === "Male"} disabled className="accent-green-500" /> Male
-                        </label>
-                        <label className="flex items-center gap-2 text-gray-700">
-                        <input type="radio" checked={user.gender === "Female"} disabled className="accent-green-500" /> Female
-                        </label>
-                    </div>
-                    </div>
-
-                    {/* Email */}
-                    <div>
-                    <label className="block text-gray-500 mb-1 font-medium">Email Address</label>
-                    <input
-                        type="email"
-                        value={user.email}
-                        readOnly
-                        className="border border-gray-200 rounded-lg px-4 py-3 w-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
-                    />
-                    </div>
-
-                    {/* Mobile */}
-                    <div>
-                    <label className="block text-gray-500 mb-1 font-medium">Mobile Number</label>
-                    <input
-                        type="text"
-                        value={user.phone}
-                        readOnly
-                        className="border border-gray-200 rounded-lg px-4 py-3 w-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
-                    />
-                    </div>
-                </div>
-                </div>
-
+              {/* Mobile */}
+              <div>
+                <label className="block text-gray-500 mb-1 font-medium">
+                  Mobile Number
+                </label>
+                <input
+                  type="text"
+                  value={user.phone}
+                  readOnly
+                  className="border border-gray-200 rounded-lg px-4 py-3 w-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200"
+                />
+              </div>
+            </div>
+          </div>
 
           {/* FAQs Accordion */}
           <div className="bg-white rounded-2xl shadow-md p-8 space-y-4">
@@ -195,7 +224,9 @@ const ProfileDashboard = () => {
 
           {/* Account Actions */}
           <div className="bg-white rounded-2xl shadow-md p-8 space-y-4">
-            <h2 className="text-xl font-semibold text-gray-900">Account Actions</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Account Actions
+            </h2>
             <div className="flex flex-col md:flex-row gap-4">
               <button className="flex-1 border border-red-500 text-red-500 px-4 py-3 rounded-lg hover:bg-red-50 font-semibold transition">
                 Deactivate Account

@@ -22,6 +22,7 @@ import Sell from "./pages/Sell";
 import Bestsellers from "./pages/Bestsellers";
 import CustomerService from "./pages/CustomerService";
 import UserAccount from "./pages/UserAccount";
+import PaymentPage from "./pages/PaymentPage";
 
 // 👇 Import CartProvider
 import { CartProvider } from "./context/CartContext";
@@ -64,6 +65,7 @@ function App() {
           <Route path="/fashion" element={<Fashion />} />
           <Route path="/electronics" element={<Electronic />} />
           <Route path="/home-kitchen" element={<HomeKitchen />} />
+          <Route path="/payment" element={<PaymentPage  />} />
 
           {/* Product pages */}
           <Route path="/product/:topic" element={<Product />} />
