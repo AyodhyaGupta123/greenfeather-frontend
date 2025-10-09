@@ -9,12 +9,13 @@ import {
   Gift,
 } from "lucide-react";
 
+
 const PaymentPage = () => {
   const [upiId, setUpiId] = useState("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-100 p-5">
-      <div className="max-w-7xl mx-auto bg-white  shadow-lg overflow-hidden">
+    <div className="min-h-screen bg-gray-200 p-10">
+      <div className="max-w-7xl mx-auto bg-white shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 ">
           <div className="flex items-center gap-3">
             <ChevronLeft className="w-5 h-5 text-blue-600 cursor-pointer" />
@@ -191,7 +192,6 @@ const PaymentPage = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

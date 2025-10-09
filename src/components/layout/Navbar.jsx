@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, ShoppingCart, MapPin, ChevronDown } from "lucide-react";
+import {
+  User,
+  Award,
+  Zap,
+  Package,
+  Heart,
+  Ticket,
+  Gift,
+  Bell,
+  LogOut,
+  Store,
+  Search,
+  ShoppingCart,
+  MapPin,
+  ChevronDown,
+} from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { LoadScript, Autocomplete } from "@react-google-maps/api";
 
@@ -125,9 +140,9 @@ const Navbar = () => {
   useEffect(() => {
     try {
       const raw = localStorage.getItem("auth");
-      setUser(raw ? JSON.parse(raw) : null); 
+      setUser(raw ? JSON.parse(raw) : null);
     } catch {
-      setUser(null); 
+      setUser(null);
     }
   }, []);
 
@@ -138,7 +153,7 @@ const Navbar = () => {
           onClick={() => (window.location.href = "/")}
           className="flex-shrink-0 cursor-pointer"
         >
-         <h2>GreenFeather</h2>
+          <h2>GreenFeather</h2>
         </div>
 
         {/* Location with Google Maps Autocomplete */}
@@ -204,164 +219,104 @@ const Navbar = () => {
             className="h-4"
           />
           <span className="text-sm font-semibold">EN</span>
-          <ChevronDown className="text-xl" />
         </div>
 
         {/* Account & Lists */}
         <div
-          className="hidden md:flex flex-col relative flex-shrink-0 cursor-pointer min-w-fit"
+          className="hidden md:flex items-center relative flex-shrink-0 cursor-pointer min-w-fit"
           onMouseEnter={() => setDropdownOpen(true)}
           onMouseLeave={() => setDropdownOpen(false)}
         >
-          <span
-            className="text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]"
-            title={
-              user
-                ? `Hello, ${user.name || user.user?.name || "User"}`
-                : "Hello, sign in"
-            }
-          >
-            {user ? `Hello, ${getUserName()}` : "Hello, sign in"}
-          </span>
-          <span className="text-sm font-semibold flex items-center whitespace-nowrap">
-            Account & Lists <ChevronDown className="text-lg ml-1" />
-          </span>
-
-          {dropdownOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white text-black w-[280px] md:w-[480px] shadow-2xl rounded-lg border border-gray-200 z-50"
+          {user ? (
+            <div className="flex items-center gap-2 border border-gray-400  hover:text-white px-3 py-1.5 rounded-md">
+              <User className="w-5 h-5" />
+              <span className="text-sm font-semibold">{getUserName()}</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
+              />
+            </div>
+          ) : (
+            <button
+              onClick={navigateToLogin}
+              className="bg-[#0f6416] text-white font-semibold px-8 py-1.5 rounded-md text-sm border-1 cursor-pointer"
             >
-              {user ? (
-                <div className="p-6">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
-                        Your Lists
-                      </h3>
-                      <ul className="space-y-2">
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Create a List
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Find a List or Registry
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
-                        Your Account
-                      </h3>
-                      <ul className="space-y-2">
-                      <li
-  onClick={() => (window.location.href = "/account")}
-  className="text-sm hover:text-[#f08804] hover:underline cursor-pointer"
->
-  Account
-</li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Orders
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Recommendations
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Watchlist
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Content & Devices
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Subscribe & Save Items
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Memberships & Subscriptions
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <button
-                      onClick={handleLogout}
-                      className="text-sm text-[#0f6416] hover:text-[#f08804] cursor-pointer font-semibold px-2 py-1 border border-[#0f6416] hover:border-[#f08804] rounded-md transition-all duration-200"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-6">
-                  <div className="flex flex-col items-center mb-4">
-                    <button
-                      onClick={navigateToLogin}
-                      className="w-full bg-gradient-to-b from-[#0da91f] to-[#05921c] hover:from-[#16da3d] cursor-pointer hover:to-[#14bc22] text-black py-2 px-4 rounded-md shadow-sm font-semibold text-sm transition-all duration-200"
-                    >
-                      Sign in
-                    </button>
-                    <p className="text-xs text-gray-600 mt-2">
-                      New customer?{" "}
-                      <span
-                        onClick={navigateToRegister}
-                        className="text-[#0066c0] hover:text-[#13760a] hover:underline cursor-pointer"
-                      >
-                        Start here.
-                      </span>
-                    </p>
-                  </div>
+              Login
+            </button>
+          )}
 
-                  <div className="grid grid-cols-2 gap-6 border-t border-gray-200 pt-4">
-                    <div>
-                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
-                        Your Lists
-                      </h3>
-                      <ul className="space-y-2">
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Create a List
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Find a List or Registry
-                        </li>
-                      </ul>
-                    </div>
+          {dropdownOpen && user && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-full right-0 mt-2 bg-white text-black w-64 shadow-2xl rounded-lg border border-gray-200 z-50 overflow-hidden"
+            >
+              <div className="px-4 py-3 border-b border-gray-200">
+                <p className="text-sm font-semibold truncate">
+                  Hello, {user.name || user.user?.name || "User"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {user.email || user.user?.email}
+                </p>
+              </div>
 
-                    <div>
-                      <h3 className="font-bold text-base mb-3 text-red-800 underline underline-offset-4">
-                        Your Account
-                      </h3>
-                      <ul className="space-y-2">
-                      <li
-  onClick={() => (window.location.href = "/account")}
-  className="text-sm hover:text-[#f08804] hover:underline cursor-pointer"
->
-  Account
-</li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Orders
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Recommendations
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Watchlist
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Kindle Unlimited
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Content & Devices
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Subscribe & Save Items
-                        </li>
-                        <li className="text-sm hover:text-[#f08804] hover:underline cursor-pointer">
-                          Memberships & Subscriptions
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <ul className="py-2">
+                {[
+                  {
+                    icon: <User className="w-5 h-5 text-blue-600" />,
+                    label: "My Profile",
+                    link: "/account",
+                  },
+                  {
+                    icon: <Package className="w-5 h-5 text-blue-600" />,
+                    label: "Orders",
+                    link: "/orders",
+                  },
+                  {
+                    icon: <Heart className="w-5 h-5 text-red-500" />,
+                    label: "Wishlist",
+                    link: "/wishlist",
+                  },
+                  {
+                    icon: <Ticket className="w-5 h-5 text-green-500" />,
+                    label: "Coupons",
+                    link: "/coupons",
+                  },
+                  {
+                    icon: <Gift className="w-5 h-5 text-pink-500" />,
+                    label: "Gift Cards",
+                    link: "/giftcards",
+                  },
+                  {
+                    icon: <Bell className="w-5 h-5 text-gray-600" />,
+                    label: "Notifications",
+                    link: "/notifications",
+                  },
+                ].map((item) => (
+                  <li key={item.label} className="hover:bg-gray-100">
+                    <a
+                      href={item.link}
+                      className="flex items-center gap-4 px-4 py-2.5 text-sm"
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Logout Button */}
+              <div className="border-t border-gray-200 p-2">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-4 px-4 py-2.5 text-sm hover:bg-gray-100 rounded-md"
+                >
+                  <LogOut className="w-5 h-5 text-gray-600" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </motion.div>
           )}
         </div>
@@ -406,8 +361,11 @@ const Navbar = () => {
           </a>
         ))}
 
-        <span className="ml-auto text-yellow-400 font-semibold whitespace-nowrap text-xs md:text-sm">
-          Great Indian Festival Live now
+        <span className="ml-auto flex items-center gap-1 text-yellow-400 font-semibold whitespace-nowrap text-xs md:text-sm cursor-pointer">
+          <Store className="w-4 h-4" />
+          <a href="#" className="hover:underline">
+            Become a Seller
+          </a>
         </span>
       </div>
     </div>

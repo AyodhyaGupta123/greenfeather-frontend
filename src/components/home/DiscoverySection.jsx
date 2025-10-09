@@ -1,34 +1,36 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
-const cardClass =
-  "bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden";
-
-const SectionCard = ({ title, items, ctaLabel }) => {
+const ProductCard = ({ image, title, offer, offerColor }) => {
   return (
-    <div className={cardClass}>
-      <div className="p-5">
-        <h3 className="text-xl font-bold mb-4">{title}</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {items.map((it, idx) => (
-            <Link key={idx} to={`/products?search=${encodeURIComponent(it.label)}`} className="space-y-2">
-              <img
-                src={it.img}
-                alt={it.label}
-                className="w-full h-28 object-cover rounded transform transition-transform duration-300 hover:scale-105"
-              />
-              <p className="text-sm text-gray-700">{it.label}</p>
-            </Link>
-          ))}
-        </div>
-        {ctaLabel && (
-          <Link
-            className="inline-block mt-4 text-sm text-blue-700 hover:underline"
-            to={`/products?search=${encodeURIComponent(title)}`}
-          >
-            {ctaLabel}
-          </Link>
-        )}
+    <div className="flex flex-col items-center p-4 bg-white">
+      <div className="w-full aspect-square mb-3 flex items-center justify-center">
+        <img 
+          src={image} 
+          alt={title}
+          className="max-w-full max-h-full object-contain"
+        />
+      </div>
+      <div className="text-sm font-medium text-gray-800 mb-1">{title}</div>
+      <div className={`text-sm font-semibold ${offerColor}`}>{offer}</div>
+    </div>
+  );
+};
+
+const DiscoveryCard = ({ title, products }) => {
+  return (
+    <div className="bg-white rounded shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b">
+        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+        <button className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors">
+          <ChevronRight className="w-5 h-5 text-white" />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-px bg-gray-100">
+        {products.map((product, idx) => (
+          <ProductCard key={idx} {...product} />
+        ))}
       </div>
     </div>
   );
@@ -37,110 +39,102 @@ const SectionCard = ({ title, items, ctaLabel }) => {
 const DiscoverySection = () => {
   const sections = [
     {
-      title: "Get your game on",
-      items: [
-        {
-          img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
-          label: "Shop gaming",
+      title: "Make your home stylish",
+      products: [
+        { 
+          image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&h=300&fit=crop",
+          title: "Inflatable Sofas", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=800&auto=format&fit=crop",
-          label: "PC accessories",
+        { 
+          image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&h=300&fit=crop",
+          title: "Shoe Rack", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1592839719941-8e2651039d01?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fENvbnNvbGVzfGVufDB8fDB8fHww",
-          label: "Consoles",
+        { 
+          image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=300&h=300&fit=crop",
+          title: "Collapsible Wardrobes", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop",
-          label: "Headsets",
+        { 
+          image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=300&h=300&fit=crop",
+          title: "Kitchen Trolleys", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
       ],
-      ctaLabel: "Explore more in gaming",
     },
     {
-      title: "Shop for your home essentials",
-      items: [
-        {
-          img: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Q2xlYW5pbmclMjBUb29sc3xlbnwwfHwwfHx8MA%3D%3D",
-          label: "Cleaning Tools",
+      title: "Top Rated",
+      products: [
+        { 
+          image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=300&h=300&fit=crop",
+          title: "Study Lamps", 
+          offer: "Grab Now",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?q=80&w=800&auto=format&fit=crop",
-          label: "Home Storage",
+        { 
+          image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
+          title: "Mobiles", 
+          offer: "Bestsellers",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format&fit=crop",
-          label: "Home Decor",
+        { 
+          image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=300&h=300&fit=crop",
+          title: "Plain Cases & Covers", 
+          offer: "Grab Now",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=800&auto=format&fit=crop",
-          label: "Bedding",
-        },
-      ],
-      ctaLabel: "Discover more in Home",
-    },
-
-    {
-      title: "Shop for your home essentials",
-      items: [
-        {
-          img: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Q2xlYW5pbmclMjBUb29sc3xlbnwwfHwwfHx8MA%3D%3D",
-          label: "Cleaning Tools",
-        },
-        {
-          img: "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?q=80&w=800&auto=format&fit=crop",
-          label: "Home Storage",
-        },
-        {
-          img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format&fit=crop",
-          label: "Home Decor",
-        },
-        {
-          img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=800&auto=format&fit=crop",
-          label: "Bedding",
+        { 
+          image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&h=300&fit=crop",
+          title: "Screen Guards", 
+          offer: "Big Savings",
+          offerColor: "text-green-600"
         },
       ],
-      ctaLabel: "Discover more in Home",
     },
     {
-      title: "Get your game on",
-      items: [
-        {
-          img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
-          label: "Shop gaming",
+      title: "Top picks of the sale",
+      products: [
+        { 
+          image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&h=300&fit=crop",
+          title: "Face Wash", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=800&auto=format&fit=crop",
-          label: "PC accessories",
+        { 
+          image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=300&h=300&fit=crop",
+          title: "Moisturizer", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1592839719941-8e2651039d01?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fENvbnNvbGVzfGVufDB8fDB8fHww",
-          label: "Consoles",
+        { 
+          image: "https://images.unsplash.com/photo-1583947581924-860bda6a26df?w=300&h=300&fit=crop",
+          title: "Deodorants", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
-        {
-          img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop",
-          label: "Headsets",
+        { 
+          image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=300&h=300&fit=crop",
+          title: "Deodorant Roll-ons", 
+          offer: "Min. 50% Off",
+          offerColor: "text-green-600"
         },
       ],
-      ctaLabel: "Explore more in gaming",
     },
-    // ...add other sections similarly
   ];
 
   return (
-    <section className="py-8 md:py-12 bg-gray-100">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {sections.map((sec, idx) => (
-          <SectionCard
-            key={idx}
-            title={sec.title}
-            items={sec.items}
-            ctaLabel={sec.ctaLabel}
-          />
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-[1440px]  mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sections.map((section, idx) => (
+          <DiscoveryCard key={idx} {...section} />
         ))}
       </div>
-    </section>
+    </div>
   );
 };
 

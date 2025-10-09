@@ -24,12 +24,12 @@ import CustomerService from "./pages/CustomerService";
 import UserAccount from "./pages/UserAccount";
 import PaymentPage from "./pages/PaymentPage";
 
-// 👇 Import CartProvider
+// Import CartProvider
 import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
-    // ✅ Wrap everything inside Router and CartProvider
+    // Wrap everything inside Router and CartProvider
     <CartProvider>
       <Router>
         <Routes>
@@ -46,8 +46,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/account" element={<ProtectedRoute><UserAccount /></ProtectedRoute>} />
-
+          <Route path="/account" element={<UserAccount />} />
           <Route path="/cart" element={<Cart />} />
           <Route
             path="/order-summary"

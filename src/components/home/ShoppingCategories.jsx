@@ -1,163 +1,153 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
-const cardClass =
-  "bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden";
-
-const SectionCard = ({ title, items, ctaLabel }) => {
+const SectionCard = ({ title, items }) => {
   return (
-    <div className={cardClass}>
-      <div className="p-5 bg-gray-50">
-        <h3 className="text-xl font-bold mb-4">{title}</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {items.map((item, idx) => (
-            <Link key={idx} to={`/products?search=${encodeURIComponent(item.label)}`} className="space-y-2">
-              <div className={item.bgClass || ""}>
-                <img
-                  src={item.image}
-                  alt={item.label}
-                  className="w-full h-28 object-cover rounded transform transition-transform duration-300 hover:scale-105"
-                />
-              </div>
-              <p className="text-sm text-gray-700 text-center">{item.label}</p>
-            </Link>
-          ))}
-        </div>
-        {ctaLabel && (
-          <Link
-            to={`/products?search=${encodeURIComponent(title)}`}
-            className="inline-block mt-4 text-sm text-teal-700 hover:text-orange-700 hover:underline"
+    <div className="bg-white p-4 shadow-sm flex-shrink-0">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <button className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+          <svg
+            className="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            {ctaLabel}
-          </Link>
-        )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {items.map((item, idx) => (
+          <div key={idx} className="flex flex-col space-y-2 cursor-pointer">
+            <div className="bg-gray-100  overflow-hidden aspect-square">
+              <img
+                src={item.image}
+                alt={item.label}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">{item.label}</p>
+              {item.subtitle && (
+                <p className="text-xs text-gray-600">{item.subtitle}</p>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-const ShoppingCategories = () => {
+const ShoppingSections = () => {
   const sections = [
     {
-      title: "Most-loved travel essentials",
+      title: "Best quality",
       items: [
         {
           image:
+            "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop",
+          label: "White Men's Casual Shoes",
+          subtitle: "Specials",
+        },
+        {
+          image:
             "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
-          label: "Backpacks",
+          label: "WROGN Duffel Bags",
+          subtitle: "In Focus Now",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400&h=400&fit=crop",
-          label: "Suitcases",
+            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+          label: "Wireless Headphones",
+          subtitle: "Popular",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400&h=400&fit=crop",
-          label: "Accessories",
-        },
-        {
-          image:
-            "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=400&fit=crop",
-          label: "Handbags",
+            "https://images.unsplash.com/photo-1564859228273-274232fdb516?w=400&h=400&fit=crop",
+          label: "Men's Kurtas",
+          subtitle: "Grab Or Gone",
         },
       ],
-      ctaLabel: "Discover more in Travel",
     },
     {
-      title: "Gear up to get fit",
+      title: "Top Selection",
       items: [
         {
           image:
             "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
-          label: "Clothing",
+          label: "AUSK Men's T-shirts",
+          subtitle: "Specials",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&h=400&fit=crop",
-          label: "Trackers",
+            "https://images.unsplash.com/photo-1603252109303-2751441dd157?w=400&h=400&fit=crop",
+          label: "Shirts",
+          subtitle: "Special offer",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=400&fit=crop",
-          label: "Equipment",
+            "https://images.unsplash.com/photo-1582719471137-c3967ffb1c42?w=400&h=400&fit=crop",
+          label: "Washing Machines",
+          subtitle: "New Range",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1624192647570-1131acc12ccf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fERlYWxzfGVufDB8fDB8fHww",
-          label: "Deals",
+            "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
+          label: "WANTED Men's Jeans",
+          subtitle: "Grab Or Gone",
         },
       ],
-      ctaLabel: "Explore Fitness Gear",
     },
     {
-      title: "Elevate your Electronics",
+      title: "Men's Casual Shoes For You",
       items: [
         {
           image:
-            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
-          label: "Headphones",
+            "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=400&fit=crop",
+          label: "White color",
+          subtitle: "4 Stars and Above",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop",
-          label: "Tablets",
+            "https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=400&h=400&fit=crop",
+          label: "Best Discounts",
+          subtitle: "Min. 70% Off",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=400&fit=crop",
-          label: "Gaming",
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+          label: "Best Brands",
+          subtitle: "Top Collection",
         },
         {
           image:
-            "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop",
-          label: "Speakers",
+            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop",
+          label: "Sneakers",
+          subtitle: "Best Selling Products",
         },
       ],
-      ctaLabel: "Shop Electronics",
-    },
-    {
-      title: "Level up your beauty routine",
-      items: [
-        {
-          image:
-            "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400&h=400&fit=crop",
-          label: "Makeup",
-        },
-        {
-          image:
-            "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=400&h=400&fit=crop",
-          label: "Brushes",
-        },
-        {
-          image:
-            "https://media.istockphoto.com/id/2189054073/photo/rectangular-cleaning-sponge-isolated-gray.webp?a=1&b=1&s=612x612&w=0&k=20&c=UMCPyAUSzIMw-Oa2sb5OikLFPCgw6M0h2HqQC5A_ovQ=",
-          label: "Sponges",
-        },
-        {
-          image:
-            "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400&h=400&fit=crop",
-          label: "Mirrors",
-        },
-      ],
-      ctaLabel: "See more in Beauty",
     },
   ];
 
   return (
-    <section className="py-8 md:py-12 bg-gray-100">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {sections.map((sec, idx) => (
-          <SectionCard
-            key={idx}
-            title={sec.title}
-            items={sec.items}
-            ctaLabel={sec.ctaLabel}
-          />
-        ))}
+    <section className="py-6 bg-gray-50 w-full">
+      <div className="max-w-[1440px] mx-auto px-4">
+        {/* Grid layout instead of flex to remove scroll */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {sections.map((section, idx) => (
+            <SectionCard key={idx} title={section.title} items={section.items} />
+          ))}
+        </div>
       </div>
     </section>
   );
 };
 
-export default ShoppingCategories;
+export default ShoppingSections;
