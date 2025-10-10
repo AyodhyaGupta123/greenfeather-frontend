@@ -41,7 +41,7 @@ const OrderSummary = () => {
       }
       await apiPost('/api/orders', { orderItems, totalPrice }, { headers: { Authorization: `Bearer ${token}` } });
       clear();
-      navigate('/');
+      navigate('/payment');
       alert('Order placed successfully');
     } catch (e) {
       setError(e.message || 'Failed to place order');

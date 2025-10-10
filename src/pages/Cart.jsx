@@ -31,6 +31,10 @@ const Cart = () => {
     navigate("/order-summary");
   };
 
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
   // Empty cart state
   if (cartItems.length === 0) {
     return (
@@ -54,7 +58,7 @@ const Cart = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-green-50 p-4 sm:p-6">
+      <div className="min-h-screen bg-green-50 p-4 sm:p-6"> 
         <h1 className="text-4xl sm:text-4xl font-extrabold text-gray-900 mb-2 text-center tracking-tight">
           Shopping Cart
         </h1>
@@ -140,7 +144,10 @@ const Cart = () => {
 
                     <div className="text-right">
                       <p className="font-bold text-xl text-gray-800">
-                        ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        ₹{item.price.toLocaleString('en-IN')} each
                       </p>
                       <p className="text-xs text-gray-500">₹{item.price.toLocaleString("en-IN")} each</p>
                     </div>

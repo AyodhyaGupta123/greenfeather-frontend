@@ -39,7 +39,9 @@ const Register = () => {
       });
       const contentType = response.headers.get("content-type") || "";
       const isJson = contentType.includes("application/json");
-      const data = isJson ? await response.json() : { message: await response.text() };
+      const data = isJson
+        ? await response.json()
+        : { message: await response.text() };
       if (!response.ok) throw new Error(data?.message || "Signup failed");
       localStorage.setItem("auth", JSON.stringify(data));
       navigate("/", { replace: true });
