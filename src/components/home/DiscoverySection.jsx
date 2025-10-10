@@ -8,11 +8,11 @@ const ProductCard = ({ image, title, offer, offerColor }) => {
         <img 
           src={image} 
           alt={title}
-          className="max-w-full max-h-full object-contain"
+          className="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-300 cursor-pointer"
         />
       </div>
       <div className="text-sm font-medium text-gray-800 mb-1">{title}</div>
-      <div className={`text-sm font-semibold ${offerColor}`}>{offer}</div>
+      <div className={`text-sm font-semibold ${offerColor}`}>{offer}</div> 
     </div>
   );
 };

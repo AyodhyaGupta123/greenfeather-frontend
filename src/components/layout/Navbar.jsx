@@ -182,7 +182,7 @@ const Navbar = () => {
           <motion.select
             value={searchCategory}
             onChange={(e) => setSearchCategory(e.target.value)}
-            className="bg-gray-100 text-black px-2 md:px-3 text-xs md:text-sm font-semibold outline-none cursor-pointer transition-colors duration-300"
+            className="bg-green-50 text-black px-2 md:px-3 text-xs md:text-sm font-semibold outline-none cursor-pointer transition-colors duration-300"
             whileHover={{ scale: 1 }}
             whileFocus={{ scale: 1 }}
           >
@@ -203,7 +203,7 @@ const Navbar = () => {
 
           <motion.button
             onClick={handleSearch}
-            className="px-3 md:px-5 flex items-center justify-center bg-gradient-to-r from-[#f4ae4c] to-[#f3a847] text-black font-semibold rounded-r-lg shadow-md hover:shadow-xl transition-all duration-300"
+            className="px-3 md:px-5 flex items-center justify-center bg-gradient-to-r from-[#528624] to-[#388848]  font-semibold rounded-r-lg shadow-md hover:shadow-xl transition-all duration-300"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -348,9 +348,9 @@ const Navbar = () => {
 
       {/* Top Menu */}
       <div className="bg-[#073903] text-white px-3 md:px-6 py-2 flex items-center space-x-4 md:space-x-6 text-sm overflow-x-auto mt-[52px] md:mt-[56px]">
-        <button className="flex items-center font-semibold whitespace-nowrap">
+        {/* <button className="flex items-center font-semibold whitespace-nowrap">
           ☰ All
-        </button>
+        </button> */}
         {topMenu.map((item, idx) => (
           <a
             key={idx}

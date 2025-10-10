@@ -35,7 +35,7 @@ const SectionCard = ({ title, items }) => {
             <div>
               <p className="text-sm font-medium text-gray-900">{item.label}</p>
               {item.subtitle && (
-                <p className="text-xs text-gray-600">{item.subtitle}</p>
+                <p className="text-sm font-bold text-green-600">{item.subtitle}</p>
               )}
             </div>
           </div>
