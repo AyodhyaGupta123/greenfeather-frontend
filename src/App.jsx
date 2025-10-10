@@ -21,45 +21,19 @@ import HomeKitchen from "./pages/HomeKitchen";
 import Sell from "./pages/Sell";
 import Bestsellers from "./pages/Bestsellers";
 import CustomerService from "./pages/CustomerService";
-
-// 👇 Import CartProvider
-import { CartProvider } from "./context/CartContext";
+ 
 
 function App() {
   return (
-<<<<<<< HEAD
-    // 👇 Wrap your entire Router inside CartProvider
-    <CartProvider>
-      <Router>
-        <Routes>
-          {/* Main pages with Layout */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route
-            path="/wishlist"
-            element={
-              <ProtectedRoute>
-                <Wishlist />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/cart" element={<Cart />} />
-
-          {/* Product pages */}
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-=======
     <Router>
       <Routes>
         {/* Main pages with Layout */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
-        <Route path="/shop" element={<Shop /> }/>
+        <Route path="/shop" element={<Shop />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-        <Route path="/cart" element={<Cart />}/>
+        <Route path="/cart" element={<Cart />} />
         <Route path="/order-summary" element={<ProtectedRoute><OrderSummary /></ProtectedRoute>} />
         <Route path="/trends" element={<Trends />} />
         <Route path="/deals" element={<Deals />} />
@@ -70,19 +44,16 @@ function App() {
         <Route path="/electronics" element={<Electronic />} />
         <Route path="/home-kitchen" element={<HomeKitchen />} />
 
-
         {/* Product pages */}
         <Route path="/product/:topic" element={<Product />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/products/:id" element={<ProductDetail />} />
->>>>>>> ayodhya
 
-          {/* Authentication pages without layout */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </Router>
-    </CartProvider>
+        {/* Authentication pages without layout */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 

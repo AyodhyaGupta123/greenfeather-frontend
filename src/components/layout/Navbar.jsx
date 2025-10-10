@@ -10,6 +10,8 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const mapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const hasMaps = Boolean(mapsApiKey);
 
   // Location states
   const [location, setLocation] = useState("Delivering to India");
@@ -25,15 +27,14 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    if (!hasMaps) return; // Skip geolocation lookup if API key is missing
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
 
         try {
           const res = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
-              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-            }`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${mapsApiKey}`
           );
           const data = await res.json();
           if (data.status === "OK" && data.results.length > 0) {
@@ -44,7 +45,7 @@ const Navbar = () => {
         }
       });
     }
-  }, []);
+  }, [hasMaps, mapsApiKey]);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -125,9 +126,9 @@ const Navbar = () => {
   useEffect(() => {
     try {
       const raw = localStorage.getItem("auth");
-      setAuth(raw ? JSON.parse(raw) : null);
+      setUser(raw ? JSON.parse(raw) : null);
     } catch {
-      setAuth(null);
+      setUser(null);
     }
   }, []);
 
@@ -141,25 +142,28 @@ const Navbar = () => {
          <h2>GreenFeather</h2>
         </div>
 
-        {/* Location with Google Maps Autocomplete */}
+        {/* Location with Google Maps Autocomplete (optional) */}
         <div className="hidden lg:flex items-center flex-shrink-0 max-w-[155px]">
           <MapPin className="text-lg" />
-          <LoadScript
-            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-            libraries={["places"]}
-          >
-            <Autocomplete
-              onLoad={(auto) => setAutocomplete(auto)}
-              onPlaceChanged={handlePlaceChanged}
-            >
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="px-2 py-1 text-white text-sm font-semibold rounded w-full whitespace-normal break-words"
-              />
-            </Autocomplete>
-          </LoadScript>
+          {hasMaps ? (
+            <LoadScript googleMapsApiKey={mapsApiKey} libraries={["places"]}>
+              <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceChanged}>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="px-2 py-1 text-white text-sm font-semibold rounded w-full whitespace-normal break-words"
+                />
+              </Autocomplete>
+            </LoadScript>
+          ) : (
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="px-2 py-1 text-white text-sm font-semibold rounded w-full whitespace-normal break-words"
+            />
+          )}
         </div>
 
         {/* Search Bar */}

@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import products from "../data/products";
 import Layout from "../components/layout/Layout";
 import { useCart } from "../context/CartContext";
-import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { ShoppingCart, Heart, Star, Truck, RotateCcw, Shield } from "lucide-react";
 
@@ -148,7 +147,7 @@ const ProductDetail = () => {
                             : "border-gray-300 hover:border-gray-400 hover:scale-105"
                         }`}
                         style={{
-                          backgroundColor: 
+                          backgroundColor:
                             color.toLowerCase() === "black" ? "#000000" :
                             color.toLowerCase() === "white" ? "#FFFFFF" :
                             color.toLowerCase() === "blue" ? "#3B82F6" :
@@ -163,12 +162,9 @@ const ProductDetail = () => {
                         }}
                         title={color}
                       >
-                        {/* White border for white color visibility */}
                         {color.toLowerCase() === "white" && (
                           <span className="absolute inset-0 rounded-full border border-gray-300"></span>
                         )}
-                        
-                        {/* Checkmark for selected color */}
                         {selectedColor === color && (
                           <span className="absolute inset-0 flex items-center justify-center">
                             <svg className="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">

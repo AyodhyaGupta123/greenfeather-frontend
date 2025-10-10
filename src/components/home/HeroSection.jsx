@@ -18,23 +18,22 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
       ctaText: "Shop Now",
       ctaLink: "/shop",
     },
-<<<<<<< HEAD
-=======
     {
-      imageUrl: "https://media.istockphoto.com/id/1439085663/photo/desktop-computers-and-equipment.webp?a=1&b=1&s=612x612&w=0&k=20&c=YT5BrFoNgaj-H5TFL1D_NTPWXhIniix2cYuYuQOIUcw=",
+      imageUrl:
+        "https://media.istockphoto.com/id/1439085663/photo/desktop-computers-and-equipment.webp?a=1&b=1&s=612x612&w=0&k=20&c=YT5BrFoNgaj-H5TFL1D_NTPWXhIniix2cYuYuQOIUcw=",
       title: "Discover the Latest Trends",
       subtitle: "Upgrade your lifestyle with our premium collections, handpicked for you.",
       ctaText: "Shop Now",
       ctaLink: "/shop",
     },
     {
-      imageUrl: "https://media.istockphoto.com/id/1313880838/photo/3d-rendering-of-online-shopping-and-advertising-concept.webp?a=1&b=1&s=612x612&w=0&k=20&c=0Kb4uMNqfG0k6OmfVgWNmRQbyosResbSBDFMKjgYrbk=",
+      imageUrl:
+        "https://media.istockphoto.com/id/1313880838/photo/3d-rendering-of-online-shopping-and-advertising-concept.webp?a=1&b=1&s=612x612&w=0&k=20&c=0Kb4uMNqfG0k6OmfVgWNmRQbyosResbSBDFMKjgYrbk=",
       title: "Discover the Latest Trends",
       subtitle: "Upgrade your lifestyle with our premium collections, handpicked for you.",
       ctaText: "Shop Now",
       ctaLink: "/shop",
     },
->>>>>>> ayodhya
   ];
 
   useEffect(() => {
@@ -49,7 +48,9 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
         if (mounted) setLoading(false);
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -65,7 +66,7 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
         speed={1200}
         className={`w-full ${heightClass}`}
       >
-        {(loading ? defaultBanners : (banners.length ? banners : defaultBanners)).map((item, idx) => (
+        {(loading ? defaultBanners : banners.length ? banners : defaultBanners).map((item, idx) => (
           <SwiperSlide key={idx} className="relative">
             <motion.img
               src={item.imageUrl}
@@ -94,7 +95,8 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="mt-4 text-sm md:text-lg opacity-90 max-w-xl"
               >
-                {item.subtitle || "Upgrade your lifestyle with our premium collections, handpicked for you."}
+                {item.subtitle ||
+                  "Upgrade your lifestyle with our premium collections, handpicked for you."}
               </motion.p>
 
               <motion.div
@@ -104,7 +106,10 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
                 className="mt-6 flex gap-4"
               >
                 {item.ctaLink && (
-                  <a href={item.ctaLink} className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition">
+                  <a
+                    href={item.ctaLink}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition"
+                  >
                     {item.ctaText || "Shop Now"}
                   </a>
                 )}
