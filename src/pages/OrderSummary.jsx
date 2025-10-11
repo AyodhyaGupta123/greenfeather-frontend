@@ -39,7 +39,7 @@ const OrderSummary = () => {
           token = parsed?.token || parsed?.user?.token || null;
         } catch {}
       }
-      await apiPost('/api/orders', { orderItems, totalPrice }, { headers: { Authorization: `Bearer ${token}` } });
+      await apiPost('/orders', { orderItems, totalPrice }, { headers: { Authorization: `Bearer ${token}` } });
       clear();
       navigate('/payment');
       alert('Order placed successfully');
