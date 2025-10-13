@@ -40,7 +40,7 @@ const HeroSection = ({ heightClass = "h-[100vh] w-full" }) => {
     let mounted = true;
     (async () => {
       try {
-        const data = await apiGet("/api/hero");
+        const data = await apiGet("/hero");
         if (mounted) setBanners(Array.isArray(data) ? data : []);
       } catch {
         if (mounted) setBanners([]);

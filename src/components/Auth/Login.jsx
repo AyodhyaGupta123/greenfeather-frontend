@@ -16,7 +16,7 @@ const Login = () => {
   const location = useLocation();
 
   const API_BASE = (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL)
-    ? `${import.meta.env.VITE_API_URL}/api/users`
+    ? `${import.meta.env.VITE_API_URL}/users`
     : "http://localhost:5000/api/users";
 
   const handleSubmit = async (e) => {
