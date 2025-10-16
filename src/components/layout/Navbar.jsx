@@ -10,11 +10,18 @@ import {
   Gift,
   Bell,
   LogOut,
-  Store,
   Search,
   ShoppingCart,
   MapPin,
   ChevronDown,
+  Store,
+  Star,
+  Smartphone,
+  Laptop,
+  Sparkles,
+  MessageCircle,
+  Shirt,
+  Home,
 } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { LoadScript, Autocomplete } from "@react-google-maps/api";
@@ -121,15 +128,47 @@ const Navbar = () => {
   };
 
   const topMenu = [
-    { name: "Sell", link: "/sell" },
-    { name: "Bestsellers", link: "/bestsellers" },
-    { name: "Today's Deals", link: "/deals" },
-    { name: "Mobiles", link: "/products" },
-    { name: "Electronics", link: "/electronics" },
-    { name: "New Releases", link: "/trends" },
-    { name: "Customer Service", link: "/customer-service" },
-    { name: "Fashion", link: "/fashion" },
-    { name: "Home & Kitchen", link: "/home-kitchen" },
+    { name: "Sell", link: "/sell", icon: <Store size={18}  /> }, 
+    {
+      name: "Bestsellers",
+      link: "/bestsellers",
+      icon: <Star size={18}  />,
+    }, 
+    {
+      name: "Today's Deals",
+      link: "/deals",
+      icon: <Gift size={18}  />,
+    }, 
+    {
+      name: "Mobiles",
+      link: "/products",
+      icon: <Smartphone size={18}  />,
+    }, 
+    {
+      name: "Electronics",
+      link: "/electronics",
+      icon: <Laptop size={18}  />,
+    }, 
+    {
+      name: "New Releases",
+      link: "/trends",
+      icon: <Sparkles size={18}  />,
+    }, 
+    {
+      name: "Customer Service",
+      link: "/customer-service",
+      icon: <MessageCircle size={18}  />, 
+    },
+    {
+      name: "Fashion",
+      link: "/fashion",
+      icon: <Shirt size={18}  />,
+    }, 
+    {
+      name: "Home & Kitchen",
+      link: "/home-kitchen",
+      icon: <Home size={18}  />,
+    }, 
   ];
 
   const getUserName = () => {
@@ -154,7 +193,7 @@ const Navbar = () => {
           onClick={() => (window.location.href = "/")}
           className="flex-shrink-0 cursor-pointer"
         >
-          <h2>GreenFeather</h2>
+          <h2>🌿 GreenFeather</h2>
         </div>
 
         {/* Location with Google Maps Autocomplete (optional) */}
@@ -162,7 +201,10 @@ const Navbar = () => {
           <MapPin className="text-lg" />
           {hasMaps ? (
             <LoadScript googleMapsApiKey={mapsApiKey} libraries={["places"]}>
-              <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceChanged}>
+              <Autocomplete
+                onLoad={(auto) => setAutocomplete(auto)}
+                onPlaceChanged={handlePlaceChanged}
+              >
                 <input
                   type="text"
                   value={location}
@@ -232,7 +274,7 @@ const Navbar = () => {
           onMouseLeave={() => setDropdownOpen(false)}
         >
           {user ? (
-            <div className="flex items-center gap-2 border border-gray-400  hover:text-white px-3 py-1.5 rounded-md">
+            <div className="flex items-center gap-2   hover:text-white px-3 py-1.5 rounded-md">
               <User className="w-5 h-5" />
               <span className="text-sm font-semibold">{getUserName()}</span>
               <ChevronDown
@@ -359,12 +401,12 @@ const Navbar = () => {
           <a
             key={idx}
             href={item.link}
-            className="hover:underline cursor-pointer whitespace-nowrap text-xs md:text-sm"
+            className="flex items-center gap-1 hover:text-white hover:scale-105 transition-transform duration-200 cursor-pointer whitespace-nowrap text-xs md:text-sm"
           >
-            {item.name}
+            {item.icon}
+            <span>{item.name}</span>
           </a>
         ))}
-
         <span className="ml-auto flex items-center gap-1 text-yellow-400 font-semibold whitespace-nowrap text-xs md:text-sm cursor-pointer">
           <Store className="w-4 h-4" />
           <a href="#" className="hover:underline">
